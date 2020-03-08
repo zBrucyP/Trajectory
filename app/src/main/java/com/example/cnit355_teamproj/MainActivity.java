@@ -3,6 +3,7 @@ package com.example.cnit355_teamproj;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -24,10 +25,18 @@ public class MainActivity extends AppCompatActivity {
 
         // play button
         play_button = (Button) findViewById(R.id.playButton);
+        play_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startGame();
+            }
+        });
 
 
         // play button click handling
+    }
 
-
+    public void startGame() {
+        setContentView(new GameView(this));
     }
 }
