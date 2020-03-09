@@ -9,7 +9,7 @@ import android.view.SurfaceHolder;
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     private MainThread thread;
-    private User_Character user_character;
+    private UserCharacter user_character;
 
     public GameView(Context context) {
         super(context);
@@ -27,7 +27,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        user_character = new User_Character(BitmapFactory.decodeResource(getResources(), R.drawable.test));
+        user_character = new UserCharacter(BitmapFactory.decodeResource(getResources(), R.drawable.test));
 
         thread.setRunning(true);
         thread.start();
