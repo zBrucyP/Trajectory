@@ -1,6 +1,7 @@
 package com.example.cnit355_teamproj;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.view.SurfaceView;
@@ -10,6 +11,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     private MainThread thread;
     private UserCharacter user_character;
+    private int screenWidth = Resources.getSystem().getDisplayMetrics().widthPixels;
+    private int screenHeight = Resources.getSystem().getDisplayMetrics().heightPixels;
 
     public GameView(Context context) {
         super(context);
@@ -27,7 +30,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        user_character = new UserCharacter(BitmapFactory.decodeResource(getResources(), R.drawable.test));
+        user_character = new UserCharacter(BitmapFactory.decodeResource(getResources(), R.drawable.users_character));
 
         thread.setRunning(true);
         thread.start();
@@ -58,5 +61,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         if (canvas != null) {
             user_character.draw(canvas);
         }
+    }
+
+    public int getScreenWidth() {
+        return screenWidth;
+    }
+
+    public int getScreenHeight() {
+        return screenHeight;
     }
 }
