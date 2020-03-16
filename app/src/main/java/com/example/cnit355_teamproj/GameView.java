@@ -7,12 +7,17 @@ import android.graphics.Canvas;
 import android.view.SurfaceView;
 import android.view.SurfaceHolder;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     private MainThread thread;
     private UserCharacter user_character;
+    private EnemyCharacter enemy_character;
+    private Scene scene;
     private int screenWidth = Resources.getSystem().getDisplayMetrics().widthPixels;
     private int screenHeight = Resources.getSystem().getDisplayMetrics().heightPixels;
+    private boolean visible;
 
     public GameView(Context context) {
         super(context);
@@ -30,8 +35,19 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        user_character = new UserCharacter(BitmapFactory.decodeResource(getResources(), R.drawable.users_character));
 
+        // set the background and scene objects
+        scene = new Scene(this);
+
+        // set the user's character
+        user_character = new UserCharacter(this, BitmapFactory.decodeResource(getResources(), R.drawable.users_character));
+
+        // set and configure the enemy character
+        enemy_character = new EnemyCharacter(this, BitmapFactory.decodeResource(getResources(), R.drawable.enemy_character));
+        enemy_character.setX((int) (Math.random() * screenWidth));
+        enemy_character.setY((int) (Math.random() * screenHeight));
+
+        // start game thread
         thread.setRunning(true);
         thread.start();
     }
@@ -51,7 +67,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void update() {
+        scene.update();
         user_character.update();
+        enemy_character.update();
     }
 
     @Override
@@ -59,7 +77,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         super.draw(canvas);
 
         if (canvas != null) {
+            scene.draw(canvas);
             user_character.draw(canvas);
+            enemy_character.draw(canvas);
         }
     }
 

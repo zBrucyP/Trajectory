@@ -10,9 +10,13 @@ public class UserCharacter {
     private int y;
     private int height;
     private int width;
+    private GameView context;
 
-    public UserCharacter(Bitmap bmp) {
+    public UserCharacter(GameView ctx, Bitmap bmp) {
+        this.context = ctx;
         this.image = bmp;
+        this.x = (int) (( this.context.getScreenWidth() ) * .1);
+        this.y = (int) this.context.getScreenHeight() / 2;
     }
 
     public void draw(Canvas canvas) {

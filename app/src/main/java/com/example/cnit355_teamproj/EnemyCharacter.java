@@ -10,8 +10,10 @@ public class EnemyCharacter {
     private int y;
     private int height;
     private int width;
+    private GameView context;
 
-    public EnemyCharacter(Bitmap bmp) {
+    public EnemyCharacter(GameView ctx, Bitmap bmp) {
+        this.context = ctx;
         this.image = bmp;
     }
 
@@ -23,4 +25,19 @@ public class EnemyCharacter {
 
     }
 
+    public int getX() {
+        return x;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
 }
