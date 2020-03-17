@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.SurfaceHolder;
 
@@ -17,7 +19,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private Scene scene;
     private int screenWidth = Resources.getSystem().getDisplayMetrics().widthPixels;
     private int screenHeight = Resources.getSystem().getDisplayMetrics().heightPixels;
-    private boolean visible;
 
     public GameView(Context context) {
         super(context);
@@ -89,5 +90,42 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     public int getScreenHeight() {
         return screenHeight;
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+
+        // get event details
+        int action = event.getAction();
+        float x = event.getX();
+        float y = event.getY();
+
+        if (action == MotionEvent.ACTION_DOWN) {
+            if (user_character.intersects(x, y)) {
+                //TODO: handle game event where user aims shot
+            }
+        }
+
+        return true;
+
+
+        //Log.d("xcoord", String.valueOf(event.getX()));
+        //Log.d("ycoord", String.valueOf(event.getY()));
+        /*
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                Log.d("down", "down" + x + ' ' + y);
+                break;
+            case MotionEvent.ACTION_MOVE:
+                Log.d("move", "move" + x + ' ' + y);
+                break;
+            case MotionEvent.ACTION_UP:
+                Log.d("up", "up" + x + ' ' + y);
+                break;
+            case MotionEvent.ACTION_CANCEL:
+                Log.d("cancel", "cancel" + x + ' ' + y);
+                break;
+        }
+         */
     }
 }

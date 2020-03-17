@@ -27,6 +27,11 @@ public class UserCharacter {
 
     }
 
+    public boolean intersects(float x, float y) {
+        //TODO: test whether x & y fall within area of this object
+        return true;
+    }
+
     public int getX() {
         return x;
     }

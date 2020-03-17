@@ -11,6 +11,8 @@ public class EnemyCharacter {
     private int height;
     private int width;
     private GameView context;
+    private boolean visible;
+    private boolean hit;
 
     public EnemyCharacter(GameView ctx, Bitmap bmp) {
         this.context = ctx;
