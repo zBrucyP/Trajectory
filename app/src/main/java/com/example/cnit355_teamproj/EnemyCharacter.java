@@ -2,6 +2,7 @@ package com.example.cnit355_teamproj;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.util.Log;
 
 public class EnemyCharacter {
 
@@ -17,6 +18,8 @@ public class EnemyCharacter {
     public EnemyCharacter(GameView ctx, Bitmap bmp) {
         this.context = ctx;
         this.image = bmp;
+        this.height = this.image.getHeight();
+        this.width = this.image.getWidth();
     }
 
     public void draw(Canvas canvas) {
@@ -25,6 +28,22 @@ public class EnemyCharacter {
 
     public void update() {
 
+    }
+
+    public boolean intersects(float x_coord, float y_coord) {
+
+        // if x_coord is within width bounds of image
+        if (x_coord < (this.getX() + width)
+                && x_coord > (this.getX())) {
+            // if touch is within height bounds of image
+            if (y_coord < (this.getY() + height)
+                    && y_coord > (this.getY())) {
+                return true;
+            }
+        }
+
+        // not within bounds of image
+        return false;
     }
 
     public int getX() {

@@ -2,6 +2,7 @@ package com.example.cnit355_teamproj;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.util.Log;
 
 public class UserCharacter {
 
@@ -11,12 +12,13 @@ public class UserCharacter {
     private int height;
     private int width;
     private GameView context;
+    private boolean selected;
 
     public UserCharacter(GameView ctx, Bitmap bmp) {
         this.context = ctx;
         this.image = bmp;
-        this.x = (int) (( this.context.getScreenWidth() ) * .1);
-        this.y = (int) this.context.getScreenHeight() / 2;
+        this.height = this.image.getHeight();
+        this.width = this.image.getWidth();
     }
 
     public void draw(Canvas canvas) {
@@ -27,9 +29,20 @@ public class UserCharacter {
 
     }
 
-    public boolean intersects(float x, float y) {
-        //TODO: test whether x & y fall within area of this object
-        return true;
+    public boolean intersects(float x_touched, float y_touched) {
+
+        // if touch is within width bounds of image
+        if (x_touched < (this.getX() + width)
+            && x_touched > (this.getX())) {
+            // if touch is within height bounds of image
+            if (y_touched < (this.getY() + height)
+                && y_touched > (this.getY())) {
+                return true;
+            }
+        }
+
+        // not within bounds of image
+        return false;
     }
 
     public int getX() {
@@ -46,5 +59,17 @@ public class UserCharacter {
 
     public void setY(int y) {
         this.y = y;
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
+
+    public void setImage(Bitmap image) {
+        this.image = image;
     }
 }
