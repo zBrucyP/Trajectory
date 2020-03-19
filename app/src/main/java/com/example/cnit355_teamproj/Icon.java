@@ -1,12 +1,13 @@
 package com.example.cnit355_teamproj;
 
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 
 public class Icon {
 
     private GameView context;
     private Bitmap image;
-    private boolean showing;
+    private boolean active;
     private int x;
     private int y;
     private int height;
@@ -19,12 +20,18 @@ public class Icon {
         this.width = this.image.getWidth();
     }
 
-    public boolean isShowing() {
-        return showing;
+    public boolean isActive() {
+        return active;
     }
 
-    public void setShowing(boolean showing) {
-        this.showing = showing;
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public void draw(Canvas canvas) {
+        if (active) {
+            canvas.drawBitmap(image, x, y, null);
+        }
     }
 
     public int getX() {

@@ -2,6 +2,7 @@ package com.example.cnit355_teamproj;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.util.Log;
@@ -18,11 +19,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private Weapon weapon;
     private EnemyCharacter enemy_character;
     private Scene scene;
+    private Icon cancel_selection_icon;
     private int screenWidth = Resources.getSystem().getDisplayMetrics().widthPixels;
     private int screenHeight = Resources.getSystem().getDisplayMetrics().heightPixels;
     private boolean aiming;
     private float previousX = 0;
     private float previousY = 0;
+
 
     public GameView(Context context) {
         super(context);
@@ -58,6 +61,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         enemy_character = new EnemyCharacter(this, BitmapFactory.decodeResource(getResources(), R.drawable.enemy_character));
         enemy_character.setX((int) (Math.random() * (screenWidth - user_character.getX())) + user_character.getX()); // so enemy is not placed behind user
         enemy_character.setY((int) (Math.random() * screenHeight));
+
+        // set and configure the cancel icon to get out of character selection
+        cancel_selection_icon = new Icon(this, BitmapFactory.decodeResource(getResources(), R.drawable.cancel_icon));
+        cancel_selection_icon.setX((int) (user_character.getX() - (user_character.getX() * .5)));
+        cancel_selection_icon.setY((int) (user_character.getY() - (user_character.getY() * .3)));
 
         // start game thread
         thread.setRunning(true);
@@ -102,6 +110,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             weapon.draw(canvas);
 
             enemy_character.draw(canvas);
+
+            cancel_selection_icon.draw(canvas);
         }
     }
 
@@ -123,11 +133,25 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             float x = event.getX();
             float y = event.getY();
 
-            if (user_character.intersects(x, y)) {
-                //TODO: show user's inventory
-                //TODO: handle game event where user aims shot
-                if(!user_character.isSelected()) {
+            if (user_character.isSelected()) {
+                if (cancel_selection_icon.intersects(x, y)) {
+                    user_character.setSelected(false);
+                    cancel_selection_icon.setActive(false);
+                    previousX = 0; //reset prev x and y for fresh start when character is reselected
+                    previousY = 0;
+                }
+                else if (previousX != 0 && previousY != 0){
+                    // TODO: calculate y=mx+b for line and send projectile flying
+                }
+                else {
+                    previousX = x;
+                    previousY = y;
+                }
+            }
+            else {
+                if (user_character.intersects(x, y)) {
                     user_character.setSelected(true);
+                    cancel_selection_icon.setActive(true);
                 }
             }
         }

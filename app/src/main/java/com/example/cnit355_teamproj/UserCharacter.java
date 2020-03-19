@@ -12,7 +12,7 @@ public class UserCharacter {
     private int height;
     private int width;
     private GameView context;
-    private boolean selected;
+    private boolean selected = false;
 
     public UserCharacter(GameView ctx, Bitmap bmp) {
         this.context = ctx;

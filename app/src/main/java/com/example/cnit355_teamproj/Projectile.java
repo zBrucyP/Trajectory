@@ -11,6 +11,7 @@ public class Projectile {
     private int y;
     private float x_velocity;
     private float y_velocity;
+    private float gravity; // 0-1
     private boolean fired;
 
     public Projectile (GameView ctx, Bitmap bmp) {
@@ -56,5 +57,17 @@ public class Projectile {
 
     public void setY_velocity(float y_velocity) {
         this.y_velocity = y_velocity;
+    }
+
+    public void setGravity(float gravity) {
+        this.gravity = gravity;
+    }
+
+    public boolean isFired() {
+        return fired;
+    }
+
+    public void setFired(boolean fired) {
+        this.fired = fired;
     }
 }
