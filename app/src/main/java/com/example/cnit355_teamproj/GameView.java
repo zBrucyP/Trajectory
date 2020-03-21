@@ -17,6 +17,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private MainThread thread;
     private UserCharacter user_character;
     private Weapon weapon;
+    private Projectile projectile;
     private EnemyCharacter enemy_character;
     private Scene scene;
     private Icon cancel_selection_icon;
@@ -56,6 +57,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         weapon = new Weapon(this, BitmapFactory.decodeResource(getResources(), R.drawable.weapon1));
         weapon.setX((int) (user_character.getX() + (user_character.getX() * .30))); // 30% further to the right than user's character model
         weapon.setY(user_character.getY());
+
+        // create the projectile for the weapon
+        projectile = new Projectile(this, weapon, BitmapFactory.decodeResource(getResources(), R.drawable.projectile1));
 
         // set and configure the enemy character
         enemy_character = new EnemyCharacter(this, BitmapFactory.decodeResource(getResources(), R.drawable.enemy_character));
@@ -109,6 +113,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
             weapon.draw(canvas);
 
+            projectile.draw(canvas);
+
             enemy_character.draw(canvas);
 
             cancel_selection_icon.draw(canvas);
@@ -136,21 +142,22 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             if (user_character.isSelected()) {
                 if (cancel_selection_icon.intersects(x, y)) {
                     user_character.setSelected(false);
+                    projectile.setVisible(false);
                     cancel_selection_icon.setActive(false);
                     previousX = 0; //reset prev x and y for fresh start when character is reselected
                     previousY = 0;
                 }
-                else if (previousX != 0 && previousY != 0){
-                    // TODO: calculate y=mx+b for line and send projectile flying
-                }
+                //else if (previousX != 0 && previousY != 0){
+                //    // TODO: calculate y=mx+b for line and send projectile flying
+                //}
                 else {
-                    previousX = x;
-                    previousY = y;
+                    projectile.rotate(30);
                 }
             }
             else {
                 if (user_character.intersects(x, y)) {
                     user_character.setSelected(true);
+                    projectile.setVisible(true);
                     cancel_selection_icon.setActive(true);
                 }
             }
