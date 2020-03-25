@@ -94,7 +94,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         scene.update();
         user_character.update();
         weapon.update();
+        projectile.update();
         enemy_character.update();
+        Log.d("mainupdguess", "main update after updates");
     }
 
     @Override
@@ -151,7 +153,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 //    // TODO: calculate y=mx+b for line and send projectile flying
                 //}
                 else {
-                    projectile.rotate(30);
+                    projectile.setDestinationPoint((int) x,(int) y);
+                    projectile.fire_projectile();
+                    Log.d("afterguess", "after fire projectile");
                 }
             }
             else {

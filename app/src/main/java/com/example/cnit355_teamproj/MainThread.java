@@ -34,6 +34,7 @@ public class MainThread extends Thread {
                 }
             }
             catch (Exception e) {
+                e.printStackTrace();
             }
             finally {
                 if (canvas != null) {
@@ -44,6 +45,11 @@ public class MainThread extends Thread {
                         e.printStackTrace();
                     }
                 }
+            }
+            try { // I added this
+                this.sleep(0);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
     }
