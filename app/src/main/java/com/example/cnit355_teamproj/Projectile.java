@@ -14,11 +14,13 @@ public class Projectile {
     private int y;
     private int width;
     private int height;
-    private int x_velocity = 0;
-    private int y_velocity = 0;
+    private float x_velocity = 0;
+    private float y_velocity = 0;
     private float gravity; // 0-1
     private int x_destination = 0;
     private int y_destination = 0;
+    private int x_reset;
+    private int y_reset;
     private boolean visible;
     private boolean fired;
     private Weapon weapon;
@@ -34,11 +36,11 @@ public class Projectile {
 
         this.x = (int) (weapon.getX());
         this.y = (int) (weapon.getY() + (weapon.getHeight() * .3));
+        this.x_reset = this.x;
+        this.y_reset = this.y;
     }
 
     public void update() {
-        Log.d("isfiring?guess", " " + this.isOnScreen());
-        Log.d("test i guess", "test test");
 
         if (!this.isOnScreen()){
             setFired(false);
@@ -60,7 +62,7 @@ public class Projectile {
         this.x_velocity = x_velocity;
     }
 
-    public void setY_velocity(int y_velocity) {
+    public void setY_velocity(float y_velocity) {
         this.y_velocity = y_velocity;
     }
 
@@ -98,7 +100,6 @@ public class Projectile {
 
     public void rotate(float angle) {
         //TODO: fix this function, bitmap rotation is overcomplicated
-        Log.d("new height/width", String.valueOf(this.height) + " " + String.valueOf(this.width));
 
         Matrix matrix = new Matrix();
         matrix.postRotate(angle, weapon.getX(), weapon.getHeight()/2);
@@ -110,8 +111,6 @@ public class Projectile {
         Bitmap new_bmp = Bitmap.createBitmap(rotated_bmp, 0, 0, this.width, this.height);
         //this.height = new_bmp.getHeight();
         //this.width = new_bmp.getWidth();
-
-        Log.d("new height/width", String.valueOf(this.height) + " " + String.valueOf(this.width));
 
         this.image = new_bmp;
     }
@@ -136,13 +135,25 @@ public class Projectile {
     }
 
     public void fire_projectile() {
-        Log.d("guessfire_projectile", "in fire projectile");
         if (x_destination > 0
                 && y_destination > 0) {
             setX_velocity(5);
-            setY_velocity(5);
+            setY_velocity(calculateY_velocity() * x_velocity);
             this.fired = true;
-            Log.d("fire_pr cond guess", "fire_projectile in conditional");
         }
+    }
+
+    public float calculateY_velocity() {
+        float slope = ((float) y_destination - y) / (x_destination - x);
+        Log.d("slopexy", y_destination + " " + y + " " + x_destination + " " + x);
+        Log.d("slope", String.valueOf(slope));
+        return slope;
+        //int b = (slope * -x) + y;
+    }
+
+    public void reset() {
+        this.x = this.x_reset;
+        this.y = this.y_reset;
+        this.fired = false;
     }
 }

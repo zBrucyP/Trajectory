@@ -96,7 +96,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         weapon.update();
         projectile.update();
         enemy_character.update();
-        Log.d("mainupdguess", "main update after updates");
     }
 
     @Override
@@ -145,17 +144,14 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 if (cancel_selection_icon.intersects(x, y)) {
                     user_character.setSelected(false);
                     projectile.setVisible(false);
+                    projectile.reset();
                     cancel_selection_icon.setActive(false);
                     previousX = 0; //reset prev x and y for fresh start when character is reselected
                     previousY = 0;
                 }
-                //else if (previousX != 0 && previousY != 0){
-                //    // TODO: calculate y=mx+b for line and send projectile flying
-                //}
                 else {
                     projectile.setDestinationPoint((int) x,(int) y);
                     projectile.fire_projectile();
-                    Log.d("afterguess", "after fire projectile");
                 }
             }
             else {
@@ -168,25 +164,5 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         }
 
         return true;
-
-
-        //Log.d("xcoord", String.valueOf(event.getX()));
-        //Log.d("ycoord", String.valueOf(event.getY()));
-        /*
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                Log.d("down", "down" + x + ' ' + y);
-                break;
-            case MotionEvent.ACTION_MOVE:
-                Log.d("move", "move" + x + ' ' + y);
-                break;
-            case MotionEvent.ACTION_UP:
-                Log.d("up", "up" + x + ' ' + y);
-                break;
-            case MotionEvent.ACTION_CANCEL:
-                Log.d("cancel", "cancel" + x + ' ' + y);
-                break;
-        }
-         */
     }
 }
