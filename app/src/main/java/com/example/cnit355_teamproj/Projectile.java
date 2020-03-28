@@ -24,6 +24,7 @@ public class Projectile {
     private boolean visible;
     private boolean fired;
     private Weapon weapon;
+    private EnemyCharacter enemy_target;
     private int rotate_angle = 0;
 
     public Projectile (GameView ctx, Weapon weapon, Bitmap bmp) {
@@ -43,6 +44,10 @@ public class Projectile {
     public void update() {
 
         if (!this.isOnScreen()){
+            setFired(false);
+        }
+
+        if(enemy_target.intersects(new Point(x+width, y), new Point(x+width, y+height))){
             setFired(false);
         }
 
@@ -159,5 +164,9 @@ public class Projectile {
         this.x = this.x_reset;
         this.y = this.y_reset;
         this.fired = false;
+    }
+
+    public void setEnemy(EnemyCharacter enemy) {
+        this.enemy_target = enemy;
     }
 }

@@ -58,13 +58,14 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         weapon.setX((int) (user_character.getX() + (user_character.getX() * .30))); // 30% further to the right than user's character model
         weapon.setY(user_character.getY());
 
-        // create the projectile for the weapon
-        projectile = new Projectile(this, weapon, BitmapFactory.decodeResource(getResources(), R.drawable.projectile1));
-
         // set and configure the enemy character
         enemy_character = new EnemyCharacter(this, BitmapFactory.decodeResource(getResources(), R.drawable.enemy_character));
-        enemy_character.setX((int) (Math.random() * (screenWidth - user_character.getX())) + user_character.getX()); // so enemy is not placed behind user
-        enemy_character.setY((int) (Math.random() * screenHeight));
+        enemy_character.setX((int) (Math.random() * (screenWidth - user_character.getX())) + (int)(user_character.getX() * 1.5)); // so enemy is not placed behind user
+        enemy_character.setY((int) (Math.random() * screenHeight - (screenHeight * .1)));
+
+        // create the projectile for the weapon
+        projectile = new Projectile(this, weapon, BitmapFactory.decodeResource(getResources(), R.drawable.projectile1));
+        projectile.setEnemy(enemy_character);
 
         // set and configure the cancel icon to get out of character selection
         cancel_selection_icon = new Icon(this, BitmapFactory.decodeResource(getResources(), R.drawable.cancel_icon));
@@ -105,6 +106,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         if (canvas != null) {
             scene.draw(canvas);
 
+            //TODO: do this from inside UserCharacter class
             if (user_character.isSelected()) {
                 user_character.setImage(BitmapFactory.decodeResource(getResources(), R.drawable.users_character_selected));
             } else {

@@ -41,15 +41,25 @@ public class EnemyCharacter {
                 return true;
             }
         }
-
         // not within bounds of image
         return false;
     }
 
-    public boolean intersects(float x_left, float y_top, int width_obj, int height_obj) {
+    public boolean intersects(Point top_right, Point bottom_right) {
 
-        //TODO: determine if object intersects the enermy character.
-
+        if (top_right.getX() < (this.x + this.width)
+                && top_right.getX() > this.x) {
+            if (top_right.getY() < (this.y + this.height)
+                    && top_right.getY() > this.y) {
+                this.setHit(true);
+                return true;
+            }
+            else if (bottom_right.getY() < (this.y + this.height)
+                    && bottom_right.getY() > this.y) {
+                this.setHit(true);
+                return true;
+            }
+        }
         // not within bounds of image
         return false;
     }
@@ -68,5 +78,13 @@ public class EnemyCharacter {
 
     public void setY(int y) {
         this.y = y;
+    }
+
+    public boolean isHit() {
+        return hit;
+    }
+
+    public void setHit(boolean hit) {
+        this.hit = hit;
     }
 }
