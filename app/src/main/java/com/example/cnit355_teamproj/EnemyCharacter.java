@@ -46,6 +46,14 @@ public class EnemyCharacter {
         return false;
     }
 
+    public boolean intersects(float x_left, float y_top, int width_obj, int height_obj) {
+
+        //TODO: determine if object intersects the enermy character.
+
+        // not within bounds of image
+        return false;
+    }
+
     public int getX() {
         return x;
     }

@@ -74,6 +74,10 @@ public class Projectile {
         this.fired = fired;
     }
 
+    public boolean isFired() {
+        return this.fired;
+    }
+
     public boolean isVisible() {
         return visible;
     }
@@ -137,7 +141,7 @@ public class Projectile {
     public void fire_projectile() {
         if (x_destination > 0
                 && y_destination > 0) {
-            setX_velocity(5);
+            setX_velocity(10);
             setY_velocity(calculateY_velocity() * x_velocity);
             this.fired = true;
         }

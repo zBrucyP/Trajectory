@@ -150,8 +150,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                     previousY = 0;
                 }
                 else {
-                    projectile.setDestinationPoint((int) x,(int) y);
-                    projectile.fire_projectile();
+                    if(!projectile.isFired()) {
+                        projectile.setDestinationPoint((int) x,(int) y);
+                        projectile.fire_projectile();
+                    }
                 }
             }
             else {
