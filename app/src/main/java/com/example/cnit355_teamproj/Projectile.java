@@ -49,6 +49,7 @@ public class Projectile {
 
         if(enemy_target.intersects(new Point(x+width, y), new Point(x+width, y+height))){
             setFired(false);
+            enemy_target.setHit(true);
         }
 
         if (fired) {
@@ -146,7 +147,7 @@ public class Projectile {
     public void fire_projectile() {
         if (x_destination > 0
                 && y_destination > 0) {
-            setX_velocity(10);
+            setX_velocity(18);
             setY_velocity(calculateY_velocity() * x_velocity);
             this.fired = true;
         }

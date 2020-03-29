@@ -5,6 +5,8 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
@@ -21,11 +23,14 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private EnemyCharacter enemy_character;
     private Scene scene;
     private Icon cancel_selection_icon;
+    private Icon reset_icon;
     private int screenWidth = Resources.getSystem().getDisplayMetrics().widthPixels;
     private int screenHeight = Resources.getSystem().getDisplayMetrics().heightPixels;
     private boolean aiming;
     private float previousX = 0;
     private float previousY = 0;
+    private int score = 0;
+    private Paint paint;
 
 
     public GameView(Context context) {
@@ -48,6 +53,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         // set the background and scene objects
         scene = new Scene(this);
 
+        // for score and font theme
+        paint = new Paint();
+        paint.setColor(Color.BLACK);
+        paint.setTextSize(50);
+
         // set the user's character
         user_character = new UserCharacter(this, BitmapFactory.decodeResource(getResources(), R.drawable.users_character));
         user_character.setX((int) (screenWidth * .1));
@@ -60,8 +70,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
         // set and configure the enemy character
         enemy_character = new EnemyCharacter(this, BitmapFactory.decodeResource(getResources(), R.drawable.enemy_character));
-        enemy_character.setX((int) (Math.random() * (screenWidth - user_character.getX())) + (int)(user_character.getX() * 1.5)); // so enemy is not placed behind user
-        enemy_character.setY((int) (Math.random() * screenHeight - (screenHeight * .1)));
+        enemy_character.setX((int) (Math.random() * (screenWidth - (user_character.getX() * 3.5))) + (int)(user_character.getX() * 3)); // so enemy is not placed behind user
+        enemy_character.setY((int) (Math.random() * (screenHeight - (screenHeight * .2))));
 
         // create the projectile for the weapon
         projectile = new Projectile(this, weapon, BitmapFactory.decodeResource(getResources(), R.drawable.projectile1));
@@ -71,6 +81,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         cancel_selection_icon = new Icon(this, BitmapFactory.decodeResource(getResources(), R.drawable.cancel_icon));
         cancel_selection_icon.setX((int) (user_character.getX() - (user_character.getX() * .5)));
         cancel_selection_icon.setY((int) (user_character.getY() - (user_character.getY() * .3)));
+
+        // set and configure the reset icon to bring projectile back
+        reset_icon = new Icon(this, BitmapFactory.decodeResource(getResources(), R.drawable.reset_icon));
+        reset_icon.setX((int) (user_character.getX()));
+        reset_icon.setY((int) (user_character.getY() - (user_character.getY() * .3)));
 
         // start game thread
         thread.setRunning(true);
@@ -96,7 +111,15 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         user_character.update();
         weapon.update();
         projectile.update();
+
         enemy_character.update();
+        if (enemy_character.isHit()){
+            incrementScore(1);
+            projectile.reset();
+            enemy_character.setX((int) (Math.random() * (screenWidth - (user_character.getX() * 3.5))) + (int)(user_character.getX() * 3)); // so enemy is not placed behind user
+            enemy_character.setY((int) (Math.random() * (screenHeight - (screenHeight * .2))));
+            enemy_character.setHit(false);
+        }
     }
 
     @Override
@@ -105,6 +128,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
         if (canvas != null) {
             scene.draw(canvas);
+
+            // score
+            canvas.drawText(String.valueOf(this.score), screenWidth*.1f, screenHeight*.1f, paint);
 
             //TODO: do this from inside UserCharacter class
             if (user_character.isSelected()) {
@@ -121,6 +147,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             enemy_character.draw(canvas);
 
             cancel_selection_icon.draw(canvas);
+
+            reset_icon.draw(canvas);
         }
     }
 
@@ -148,11 +176,16 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                     projectile.setVisible(false);
                     projectile.reset();
                     cancel_selection_icon.setActive(false);
+                    reset_icon.setActive(false);
                     previousX = 0; //reset prev x and y for fresh start when character is reselected
                     previousY = 0;
                 }
+                else if (reset_icon.intersects(x, y)) {
+                    projectile.reset();
+                }
                 else {
-                    if(!projectile.isFired()) {
+                    if(!projectile.isFired()
+                            && x > (user_character.getX() * 1.1)) {
                         projectile.setDestinationPoint((int) x,(int) y);
                         projectile.fire_projectile();
                     }
@@ -163,10 +196,15 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                     user_character.setSelected(true);
                     projectile.setVisible(true);
                     cancel_selection_icon.setActive(true);
+                    reset_icon.setActive(true);
                 }
             }
         }
 
         return true;
+    }
+
+    public void incrementScore(int incr) {
+        this.score += incr;
     }
 }
