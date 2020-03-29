@@ -38,6 +38,6 @@ public class MainActivity extends Activity {
     }
 
     public void startGame() {
-        setContentView(new GameView(this));
+        setContentView(new GameView(this, 1));
     }
 }

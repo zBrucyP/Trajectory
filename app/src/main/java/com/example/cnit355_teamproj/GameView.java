@@ -17,28 +17,15 @@ import java.util.concurrent.ThreadLocalRandom;
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     private MainThread thread;
-    private UserCharacter user_character;
-    private Weapon weapon;
-    private Projectile projectile;
-    private EnemyCharacter enemy_character;
-    private Scene scene;
-    private Icon cancel_selection_icon;
-    private Icon reset_icon;
+    private Game game;
     private int screenWidth = Resources.getSystem().getDisplayMetrics().widthPixels;
     private int screenHeight = Resources.getSystem().getDisplayMetrics().heightPixels;
-    private boolean aiming;
-    private float previousX = 0;
-    private float previousY = 0;
-    private int score = 0;
-    private Paint paint;
 
-
-    public GameView(Context context) {
+    public GameView(Context context, int difficulty) {
         super(context);
-
         getHolder().addCallback(this);
-
         thread = new MainThread(getHolder(), this);
+        game = new Game(this, difficulty);
         setFocusable(true);
     }
 
@@ -49,43 +36,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-
-        // set the background and scene objects
-        scene = new Scene(this);
-
-        // for score and font theme
-        paint = new Paint();
-        paint.setColor(Color.BLACK);
-        paint.setTextSize(50);
-
-        // set the user's character
-        user_character = new UserCharacter(this, BitmapFactory.decodeResource(getResources(), R.drawable.users_character));
-        user_character.setX((int) (screenWidth * .1));
-        user_character.setY((int) (screenHeight / 2));
-
-        // set the user's weapon
-        weapon = new Weapon(this, BitmapFactory.decodeResource(getResources(), R.drawable.weapon1));
-        weapon.setX((int) (user_character.getX() + (user_character.getX() * .30))); // 30% further to the right than user's character model
-        weapon.setY(user_character.getY());
-
-        // set and configure the enemy character
-        enemy_character = new EnemyCharacter(this, BitmapFactory.decodeResource(getResources(), R.drawable.enemy_character));
-        enemy_character.setX((int) (Math.random() * (screenWidth - (user_character.getX() * 3.5))) + (int)(user_character.getX() * 3)); // so enemy is not placed behind user
-        enemy_character.setY((int) (Math.random() * (screenHeight - (screenHeight * .2))));
-
-        // create the projectile for the weapon
-        projectile = new Projectile(this, weapon, BitmapFactory.decodeResource(getResources(), R.drawable.projectile1));
-        projectile.setEnemy(enemy_character);
-
-        // set and configure the cancel icon to get out of character selection
-        cancel_selection_icon = new Icon(this, BitmapFactory.decodeResource(getResources(), R.drawable.cancel_icon));
-        cancel_selection_icon.setX((int) (user_character.getX() - (user_character.getX() * .5)));
-        cancel_selection_icon.setY((int) (user_character.getY() - (user_character.getY() * .3)));
-
-        // set and configure the reset icon to bring projectile back
-        reset_icon = new Icon(this, BitmapFactory.decodeResource(getResources(), R.drawable.reset_icon));
-        reset_icon.setX((int) (user_character.getX()));
-        reset_icon.setY((int) (user_character.getY() - (user_character.getY() * .3)));
+        game.setupGame();
 
         // start game thread
         thread.setRunning(true);
@@ -107,49 +58,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void update() {
-        scene.update();
-        user_character.update();
-        weapon.update();
-        projectile.update();
-
-        enemy_character.update();
-        if (enemy_character.isHit()){
-            incrementScore(1);
-            projectile.reset();
-            enemy_character.setX((int) (Math.random() * (screenWidth - (user_character.getX() * 3.5))) + (int)(user_character.getX() * 3)); // so enemy is not placed behind user
-            enemy_character.setY((int) (Math.random() * (screenHeight - (screenHeight * .2))));
-            enemy_character.setHit(false);
-        }
+        game.update();
     }
 
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
-
-        if (canvas != null) {
-            scene.draw(canvas);
-
-            // score
-            canvas.drawText(String.valueOf(this.score), screenWidth*.1f, screenHeight*.1f, paint);
-
-            //TODO: do this from inside UserCharacter class
-            if (user_character.isSelected()) {
-                user_character.setImage(BitmapFactory.decodeResource(getResources(), R.drawable.users_character_selected));
-            } else {
-                user_character.setImage(BitmapFactory.decodeResource(getResources(), R.drawable.users_character));
-            }
-            user_character.draw(canvas);
-
-            weapon.draw(canvas);
-
-            projectile.draw(canvas);
-
-            enemy_character.draw(canvas);
-
-            cancel_selection_icon.draw(canvas);
-
-            reset_icon.draw(canvas);
-        }
+        game.draw(canvas);
     }
 
     public int getScreenWidth() {
@@ -162,49 +77,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-
-        // get event details
-        int action = event.getAction();
-
-        if (action == MotionEvent.ACTION_DOWN) {
-            float x = event.getX();
-            float y = event.getY();
-
-            if (user_character.isSelected()) {
-                if (cancel_selection_icon.intersects(x, y)) {
-                    user_character.setSelected(false);
-                    projectile.setVisible(false);
-                    projectile.reset();
-                    cancel_selection_icon.setActive(false);
-                    reset_icon.setActive(false);
-                    previousX = 0; //reset prev x and y for fresh start when character is reselected
-                    previousY = 0;
-                }
-                else if (reset_icon.intersects(x, y)) {
-                    projectile.reset();
-                }
-                else {
-                    if(!projectile.isFired()
-                            && x > (user_character.getX() * 1.1)) {
-                        projectile.setDestinationPoint((int) x,(int) y);
-                        projectile.fire_projectile();
-                    }
-                }
-            }
-            else {
-                if (user_character.intersects(x, y)) {
-                    user_character.setSelected(true);
-                    projectile.setVisible(true);
-                    cancel_selection_icon.setActive(true);
-                    reset_icon.setActive(true);
-                }
-            }
-        }
-
+        game.handleUserAction(event);
         return true;
-    }
-
-    public void incrementScore(int incr) {
-        this.score += incr;
     }
 }
