@@ -12,8 +12,7 @@ public class Weapon {
     private int y;
     private int width;
     private int height;
-    private int x_1_userPoint = 0;
-    private int y_1_userPoint = 0;
+
 
     public Weapon(GameView ctx, Bitmap bmp) {
         this.context = ctx;
@@ -24,9 +23,6 @@ public class Weapon {
 
     public void draw(Canvas canvas) {
         canvas.drawBitmap(image, x, y, null);
-        if (x_1_userPoint != 0 && y_1_userPoint != 0) {
-            //TODO: canvas.drawRect on weapon in proportion to where user clicked & screen width
-        }
     }
 
     public void update() {

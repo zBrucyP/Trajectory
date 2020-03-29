@@ -25,15 +25,16 @@ public class Projectile {
     private boolean fired;
     private Weapon weapon;
     private EnemyCharacter enemy_target;
-    private int rotate_angle = 0;
 
-    public Projectile (GameView ctx, Weapon weapon, Bitmap bmp) {
+
+    public Projectile (GameView ctx, Weapon weapon, Bitmap bmp, float velocity) {
         this.context = ctx;
         this.weapon = weapon;
         this.image = bmp;
         this.width = image.getWidth();
         this.height = image.getHeight();
         this.visible = false;
+        this.x_velocity = velocity; // allow call to set how fast projectile moves. Y velocity will be dependent on this variable
 
         this.x = (int) (weapon.getX());
         this.y = (int) (weapon.getY() + (weapon.getHeight() * .3));
@@ -43,15 +44,12 @@ public class Projectile {
 
     public void update() {
 
-        if (!this.isOnScreen()){
-            setFired(false);
-        }
-
+        // if projectile hits enemy, stop it. Enemy will already know it has been hit
         if(enemy_target.intersects(new Point(x+width, y), new Point(x+width, y+height))){
             setFired(false);
-            enemy_target.setHit(true);
         }
 
+        // if user launched projectile and it has had no reason to stop, keep moving it
         if (fired) {
             this.x += x_velocity;
             this.y += y_velocity;
@@ -84,31 +82,13 @@ public class Projectile {
         return this.fired;
     }
 
-    public boolean isVisible() {
-        return visible;
-    }
-
     public void setVisible(boolean visible) {
         this.visible = visible;
     }
 
-    public int getWidth() {
-        return width;
-    }
-
-    public void setWidth(int width) {
-        this.width = width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public void setHeight(int height) {
-        this.height = height;
-    }
 
     public void rotate(float angle) {
+        // this function is currently unused and does not work
         //TODO: fix this function, bitmap rotation is overcomplicated
 
         Matrix matrix = new Matrix();
@@ -147,16 +127,13 @@ public class Projectile {
     public void fire_projectile() {
         if (x_destination > 0
                 && y_destination > 0) {
-            setX_velocity(18);
-            setY_velocity(calculateY_velocity() * x_velocity);
+            setY_velocity(calculateY_velocity() * x_velocity); // y velocity is dependent on x velocity to maintain proper slope
             this.fired = true;
         }
     }
 
     public float calculateY_velocity() {
         float slope = ((float) y_destination - y) / (x_destination - x);
-        Log.d("slopexy", y_destination + " " + y + " " + x_destination + " " + x);
-        Log.d("slope", String.valueOf(slope));
         return slope;
         //int b = (slope * -x) + y;
     }
