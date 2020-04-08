@@ -8,10 +8,12 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.RadioGroup;
 
 public class MainActivity extends Activity {
 
     private Button play_button;
+    private RadioGroup rg_difficulties;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +26,9 @@ public class MainActivity extends Activity {
         // start app with the main menu displayed
         setContentView(R.layout.main_menu);
 
+        // difficulties radiogroup
+        rg_difficulties = (RadioGroup) findViewById(R.id.radioGroup_difficulties);
+
         // play button
         play_button = (Button) findViewById(R.id.playButton);
         play_button.setOnClickListener(new View.OnClickListener() {
@@ -32,9 +37,6 @@ public class MainActivity extends Activity {
                 startGame();
             }
         });
-
-
-        // play button click handling
     }
 
     public void startGame() {
