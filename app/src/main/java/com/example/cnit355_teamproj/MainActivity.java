@@ -9,6 +9,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
@@ -40,6 +41,11 @@ public class MainActivity extends Activity {
     }
 
     public void startGame() {
-        setContentView(new GameView(this, 1));
+        // get user-selected difficulty of game
+        int id_radioButton = rg_difficulties.getCheckedRadioButtonId();
+        View v_chosenDifficulty = rg_difficulties.findViewById(id_radioButton);
+        int difficulty = rg_difficulties.indexOfChild(v_chosenDifficulty);
+
+        setContentView(new GameView(this, difficulty));
     }
 }
