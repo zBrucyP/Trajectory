@@ -11,6 +11,8 @@ public class EnemyCharacter {
     private int y;
     private int height;
     private int width;
+    private int x_vel = 0;
+    private int y_vel = 0;
     private GameView context;
     private boolean visible;
     private boolean hit;

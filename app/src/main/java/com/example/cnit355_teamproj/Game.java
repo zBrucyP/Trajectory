@@ -4,7 +4,10 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.Log;
 import android.view.MotionEvent;
+
+import java.util.Random;
 
 public class Game {
 
@@ -16,6 +19,7 @@ public class Game {
     private Scene scene;
     private Icon cancel_selection_icon;
     private Icon reset_icon;
+    private Icon pause_icon;
     private Paint score_font_theme;
     private int score;
     private enum difficulty {EASY, MEDIUM, HARD}
@@ -70,6 +74,12 @@ public class Game {
         reset_icon = new Icon(context, BitmapFactory.decodeResource(context.getResources(), R.drawable.reset_icon));
         reset_icon.setX((int) (user_character.getX()));
         reset_icon.setY((int) (user_character.getY() - (user_character.getY() * .3)));
+
+        // set and configure pause icon for instructions and quit game
+        pause_icon = new Icon(context, BitmapFactory.decodeResource(context.getResources(), R.drawable.pause_icon));
+        pause_icon.setX((int) (context.getScreenWidth() * .05));
+        pause_icon.setY((int) (context.getScreenHeight() * .05));
+        pause_icon.setActive(true);
     }
 
     public void update() {
@@ -103,6 +113,7 @@ public class Game {
             enemy_character.draw(canvas);
             cancel_selection_icon.draw(canvas);
             reset_icon.draw(canvas);
+            pause_icon.draw(canvas);
         }
     }
 
