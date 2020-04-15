@@ -20,10 +20,12 @@ public class Game {
     private Icon cancel_selection_icon;
     private Icon reset_icon;
     private Icon pause_icon;
+    private Icon instructions_menu_icon;
     private Paint score_font_theme;
     private int score;
     private enum difficulty {EASY, MEDIUM, HARD}
     private difficulty game_difficulty;
+    private boolean isPaused;
 
 
     public Game(GameView context, int diff) {
@@ -38,6 +40,10 @@ public class Game {
     }
 
     public void setupGame() {
+
+        // mark game as playing
+        isPaused = false;
+
         // set the background and scene objects
         scene = new Scene(this.context);
 
@@ -80,6 +86,11 @@ public class Game {
         pause_icon.setX((int) (context.getScreenWidth() * .05));
         pause_icon.setY((int) (context.getScreenHeight() * .05));
         pause_icon.setActive(true);
+
+        // setup instructions menu
+        instructions_menu_icon = new Icon(context, BitmapFactory.decodeResource(context.getResources(), R.drawable.instructions));
+        instructions_menu_icon.setX((int) (context.getScreenWidth() * .5));
+        instructions_menu_icon.setY((int) (context.getScreenHeight() * .5));
     }
 
     public void update() {
@@ -114,6 +125,7 @@ public class Game {
             cancel_selection_icon.draw(canvas);
             reset_icon.draw(canvas);
             pause_icon.draw(canvas);
+            instructions_menu_icon.draw(canvas);
         }
     }
 
@@ -139,7 +151,11 @@ public class Game {
             float x = event.getX();
             float y = event.getY();
 
-            if (user_character.isSelected()) {
+            if (pause_icon.intersects(x, y)) {
+                instructions_menu_icon.setActive(true);
+                isPaused = true;
+            }
+            else if (user_character.isSelected() && !isPaused) {
                 if (cancel_selection_icon.intersects(x, y)) {
                     user_character.setSelected(false);
                     user_character.setImage(BitmapFactory.decodeResource(context.getResources(), R.drawable.users_character));
@@ -160,6 +176,9 @@ public class Game {
                 }
             }
             else {
+                isPaused = false;
+                instructions_menu_icon.setActive(false);
+
                 if (user_character.intersects(x, y)) {
                     user_character.setSelected(true);
                     user_character.setImage(BitmapFactory.decodeResource(context.getResources(), R.drawable.users_character_selected));
