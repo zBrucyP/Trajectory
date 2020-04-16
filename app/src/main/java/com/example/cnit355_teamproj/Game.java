@@ -21,11 +21,13 @@ public class Game {
     private Icon reset_icon;
     private Icon pause_icon;
     private Icon instructions_menu_icon;
+    private Icon return_to_main_menu_icon;
     private Paint score_font_theme;
     private int score;
     private enum difficulty {EASY, MEDIUM, HARD}
     private difficulty game_difficulty;
     private boolean isPaused;
+    private boolean isGameover;
 
 
     public Game(GameView context, int diff) {
@@ -37,6 +39,10 @@ public class Game {
         } else {
             this.game_difficulty = difficulty.HARD;
         }
+    }
+
+    public boolean isGameover() {
+        return isGameover;
     }
 
     public void setupGame() {
@@ -89,8 +95,14 @@ public class Game {
 
         // setup instructions menu
         instructions_menu_icon = new Icon(context, BitmapFactory.decodeResource(context.getResources(), R.drawable.instructions));
-        instructions_menu_icon.setX((int) (context.getScreenWidth() * .5));
-        instructions_menu_icon.setY((int) (context.getScreenHeight() * .5));
+        instructions_menu_icon.setX((int) (context.getScreenWidth() * .5) - (instructions_menu_icon.getWidth() / 2));
+        instructions_menu_icon.setY((int) (context.getScreenHeight() * .5) - (instructions_menu_icon.getHeight()));
+
+        // icon to return to main menu
+        return_to_main_menu_icon = new Icon(context, BitmapFactory.decodeResource(context.getResources(), R.drawable.return_to_menu_icon));
+        return_to_main_menu_icon.setX(instructions_menu_icon.getX());
+        return_to_main_menu_icon.setY((int) ((instructions_menu_icon.getY() + instructions_menu_icon.getHeight()) * 1.1));
+
     }
 
     public void update() {
@@ -126,6 +138,7 @@ public class Game {
             reset_icon.draw(canvas);
             pause_icon.draw(canvas);
             instructions_menu_icon.draw(canvas);
+            return_to_main_menu_icon.draw(canvas);
         }
     }
 
@@ -152,8 +165,9 @@ public class Game {
             float y = event.getY();
 
             if (pause_icon.intersects(x, y)) {
-                instructions_menu_icon.setActive(true);
                 isPaused = true;
+                instructions_menu_icon.setActive(true);
+                return_to_main_menu_icon.setActive(true);
             }
             else if (user_character.isSelected() && !isPaused) {
                 if (cancel_selection_icon.intersects(x, y)) {
@@ -176,15 +190,22 @@ public class Game {
                 }
             }
             else {
-                isPaused = false;
-                instructions_menu_icon.setActive(false);
+                if(return_to_main_menu_icon.intersects(x, y)) {
+                    // go back to main menu
+                    isGameover = true;
+                }
+                else {
+                    isPaused = false;
+                    instructions_menu_icon.setActive(false);
+                    return_to_main_menu_icon.setActive(false);
 
-                if (user_character.intersects(x, y)) {
-                    user_character.setSelected(true);
-                    user_character.setImage(BitmapFactory.decodeResource(context.getResources(), R.drawable.users_character_selected));
-                    projectile.setVisible(true);
-                    cancel_selection_icon.setActive(true);
-                    reset_icon.setActive(true);
+                    if (user_character.intersects(x, y)) {
+                        user_character.setSelected(true);
+                        user_character.setImage(BitmapFactory.decodeResource(context.getResources(), R.drawable.users_character_selected));
+                        projectile.setVisible(true);
+                        cancel_selection_icon.setActive(true);
+                        reset_icon.setActive(true);
+                    }
                 }
             }
         }
