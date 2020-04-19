@@ -3,6 +3,7 @@ package com.example.cnit355_teamproj;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
@@ -15,6 +16,8 @@ public class MainActivity extends Activity {
 
     private Button play_button;
     private RadioGroup rg_difficulties;
+
+    private int LAUNCH_GAME_ACTIVITY = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +49,10 @@ public class MainActivity extends Activity {
         View v_chosenDifficulty = rg_difficulties.findViewById(id_radioButton);
         int difficulty = rg_difficulties.indexOfChild(v_chosenDifficulty);
 
-        setContentView(new GameView(this, difficulty));
+        Intent i = GameActivity.newInstance(this);
+        i.putExtra("EXTRA_DIFFICULTY", difficulty);
+        startActivityForResult(i, LAUNCH_GAME_ACTIVITY);
+
+        //setContentView(new GameView(this, difficulty));
     }
 }
