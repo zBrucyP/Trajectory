@@ -14,6 +14,7 @@ public class GameActivity extends AppCompatActivity {
     // This will help with returning to the main menu + adding modularity
     private int difficulty;
     private String EXTRA_DIFFICULTY = "EXTRA_DIFFICULTY";
+    private Game game;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,5 +35,9 @@ public class GameActivity extends AppCompatActivity {
     public static Intent newInstance(Context ctx) {
         Intent i = new Intent(ctx, GameActivity.class);
         return i;
+    }
+
+    public void isGameOver() {
+
     }
 }
