@@ -1,18 +1,20 @@
 package com.example.cnit355_teamproj;
 
+import android.content.Context;
 import android.graphics.Canvas;
 import android.view.SurfaceHolder;
 
 public class MainThread extends Thread {
 
+    private GameActivity context;
     private SurfaceHolder surfaceHolder;
     private GameView gameView;
     private boolean running;
     public static Canvas canvas;
 
-    public MainThread(SurfaceHolder surfaceHolder, GameView gameView) {
-
+    public MainThread(GameActivity ctx, SurfaceHolder surfaceHolder, GameView gameView) {
         super();
+        this.context = ctx;
         this.surfaceHolder = surfaceHolder;
         this.gameView = gameView;
     }
@@ -29,8 +31,7 @@ public class MainThread extends Thread {
             try {
                 canvas = this.surfaceHolder.lockCanvas();
                 synchronized (surfaceHolder) {
-                    this.gameView.update();
-                    this.gameView.draw(canvas);
+                    this.context.updateGame(canvas);
                 }
             }
             catch (Exception e) {
