@@ -23,11 +23,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private int screenHeight = Resources.getSystem().getDisplayMetrics().heightPixels;
     private Context context;
 
-    public GameView(Context ctx, int difficulty) {
+    public GameView(Context ctx, int difficulty, Game game) {
         super(ctx);
         getHolder().addCallback(this);
         thread = new MainThread(getHolder(), this);
-        this.game = new Game(this, difficulty);
+        this.game = game;
         this.context = ctx;
         setFocusable(true);
     }
@@ -39,7 +39,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        game.setupGame();
+        //game.setupGame();
 
         // start game thread
         thread.setRunning(true);
@@ -72,7 +72,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         }
         else {
             // end thread, return to main menu
-            
+
 
             //Intent i = new Intent(this.context, MainActivity.class);
             //this.context.startActivity(i);
