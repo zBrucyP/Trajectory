@@ -6,58 +6,151 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
+    <!-- drawable/enemy_chara.xml -->
+    <View
+        android:id="@+id/enemy_chara"
+        android:layout_width="31dp"
+        android:layout_height="61dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginEnd="51dp"
+        android:layout_marginBottom="99dp"
+        android:background="@drawable/enemy_character"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+
+    <!-- projectile1 1 -->
+
+    <!-- character -->
+
+    <View
+        android:id="@+id/projectile1"
+        android:layout_width="84dp"
+        android:layout_height="14dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="148dp"
+        android:layout_marginEnd="452dp"
+        android:background="@drawable/projectile1"
+        app:layout_constraintEnd_toStartOf="@+id/enemy_chara"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/projectile"
+        android:layout_width="84dp"
+        android:layout_height="14dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="149dp"
+        android:background="@drawable/projectile1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/enemy_chara" />
+
+    <RelativeLayout
+        android:id="@+id/charfame"
+        android:layout_width="50dp"
+        android:layout_height="62dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="94dp"
+        android:layout_marginTop="133dp"
+        android:background="@drawable/charframe"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <!-- howToPlay -->
+    <Button
+        android:id="@+id/howtoplayfr"
+        android:layout_width="159dp"
+        android:layout_height="40dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="5dp"
+        android:layout_marginBottom="4dp"
+        android:background="@drawable/how_to_play_frame"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <Button
         android:id="@+id/playButton"
-        android:layout_width="174dp"
-        android:layout_height="125dp"
-        android:text="@string/play_button_text"
-        android:textColor="@android:color/white"
-        android:background="@android:color/black"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_width="260dp"
+        android:layout_height="89dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="174dp"
+        android:background="@drawable/play_button_frame"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <RadioGroup
-        android:id="@+id/radioGroup_difficulties"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="275dp"
-        android:checkedButton="@id/radioButton_easyDifficulty"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <!-- Select Difficulty: -->
+    <LinearLayout
+        android:layout_width="208dp"
+        android:layout_height="55dp"
+        android:layout_margin="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:orientation="vertical"
+        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/playButton">
 
-        <RadioButton
-            android:id="@+id/radioButton_easyDifficulty"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/select_diff"
+            android:layout_width="207dp"
+            android:layout_height="21dp"
+            android:gravity="center_horizontal|top"
+            android:text="@string/select_diff"
+            tools:layout_editor_absoluteX="262dp"
+            tools:layout_editor_absoluteY="299dp" />
+
+        <RadioGroup
+            android:id="@+id/radioGroup_difficulties"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/difficulty_easy"
-            android:layout_weight="1"
-            tools:layout_editor_absoluteX="183dp"
-            tools:layout_editor_absoluteY="317dp" />
+            android:layout_marginTop="1dp"
+            android:checkedButton="@id/radioButton_easyDifficulty"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/playButton">
 
-        <RadioButton
-            android:id="@+id/radioButton_mediumDifficulty"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/difficulty_medium"
-            android:layout_weight="1"
-            tools:layout_editor_absoluteX="183dp"
-            tools:layout_editor_absoluteY="317dp" />
+            <RadioButton
+                android:id="@+id/radioButton_easyDifficulty"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/difficulty_easy"
+                tools:layout_editor_absoluteX="183dp"
+                tools:layout_editor_absoluteY="317dp" />
 
-        <RadioButton
-            android:id="@+id/radioButton_hardDifficulty"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/difficulty_hard"
-            android:layout_weight="1"
-            tools:layout_editor_absoluteX="183dp"
-            tools:layout_editor_absoluteY="317dp" />
+            <RadioButton
+                android:id="@+id/radioButton_mediumDifficulty"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/difficulty_medium"
+                tools:layout_editor_absoluteX="183dp"
+                tools:layout_editor_absoluteY="317dp" />
 
-    </RadioGroup>
+            <RadioButton
+                android:id="@+id/radioButton_hardDifficulty"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/difficulty_hard"
+                tools:layout_editor_absoluteX="183dp"
+                tools:layout_editor_absoluteY="317dp" />
+
+        </RadioGroup>
+    </LinearLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
