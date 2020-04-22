@@ -201,7 +201,8 @@ public class Game {
                 }
             }
             else {
-                if(return_to_main_menu_icon.intersects(x, y)) { // user clicked button to return to the main menu
+                if(return_to_main_menu_icon.intersects(x, y) // user clicked button to return to the main menu during pause menu
+                        && isPaused) {
                     // go back to main menu
                     isGameover = true;
                 }
@@ -210,7 +211,7 @@ public class Game {
                     instructions_menu_icon.setActive(false);
                     return_to_main_menu_icon.setActive(false);
 
-                    if (user_character.intersects(x, y)) {
+                    if (user_character.intersects(x, y)) { // user selected their character
                         user_character.setSelected(true);
                         user_character.setImage(BitmapFactory.decodeResource(context.getResources(), R.drawable.users_character_selected));
                         projectile.setVisible(true);
