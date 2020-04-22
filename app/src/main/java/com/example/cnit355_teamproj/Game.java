@@ -1,5 +1,6 @@
 package com.example.cnit355_teamproj;
 
+import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -11,7 +12,8 @@ import java.util.Random;
 
 public class Game {
 
-    private GameView context;
+    private Context context;
+    private GameView view;
     private UserCharacter user_character;
     private Weapon weapon;
     private Projectile projectile;
@@ -30,7 +32,7 @@ public class Game {
     private boolean isGameover;
 
 
-    public Game(GameView context, int diff) {
+    public Game(Context context, int diff) {
         this.context = context;
         if(diff == 0) {
             this.game_difficulty = difficulty.EASY;
@@ -45,13 +47,16 @@ public class Game {
         return isGameover;
     }
 
-    public void setupGame() {
+    public void setupGame(GameView v) {
+
+        // attach/set the view to use
+        setView(v);
 
         // mark game as playing
         isPaused = false;
 
         // set the background and scene objects
-        scene = new Scene(this.context);
+        scene = new Scene(view);
 
         // score setup
         score_font_theme = new Paint();
@@ -59,47 +64,47 @@ public class Game {
         score_font_theme.setTextSize(50);
 
         // set the user's character
-        user_character = new UserCharacter(context, BitmapFactory.decodeResource(context.getResources(), R.drawable.users_character));
-        user_character.setX((int) (context.getScreenWidth() * .1));
-        user_character.setY((int) (context.getScreenHeight() / 2));
+        user_character = new UserCharacter(view, BitmapFactory.decodeResource(context.getResources(), R.drawable.users_character));
+        user_character.setX((int) (view.getScreenWidth() * .1));
+        user_character.setY((int) (view.getScreenHeight() / 2));
 
         // set the user's weapon
-        weapon = new Weapon(context, BitmapFactory.decodeResource(context.getResources(), R.drawable.weapon1));
+        weapon = new Weapon(view, BitmapFactory.decodeResource(context.getResources(), R.drawable.weapon1));
         weapon.setX((int) (user_character.getX() + (user_character.getX() * .30))); // 30% further to the right than user's character model
         weapon.setY(user_character.getY());
 
         // set and configure the enemy character
-        enemy_character = new EnemyCharacter(context, BitmapFactory.decodeResource(context.getResources(), R.drawable.enemy_character));
-        enemy_character.setX((int) (Math.random() * (context.getScreenWidth() - (user_character.getX() * 3.5))) + (int)(user_character.getX() * 3)); // so enemy is not placed behind user
-        enemy_character.setY((int) (Math.random() * (context.getScreenHeight() - (context.getScreenHeight() * .2))));
+        enemy_character = new EnemyCharacter(view, BitmapFactory.decodeResource(context.getResources(), R.drawable.enemy_character));
+        enemy_character.setX((int) (Math.random() * (view.getScreenWidth() - (user_character.getX() * 3.5))) + (int)(user_character.getX() * 3)); // so enemy is not placed behind user
+        enemy_character.setY((int) (Math.random() * (view.getScreenHeight() - (view.getScreenHeight() * .2))));
 
         // create the projectile for the weapon
-        projectile = new Projectile(context, weapon, BitmapFactory.decodeResource(context.getResources(), R.drawable.projectile1), 18);
+        projectile = new Projectile(view, weapon, BitmapFactory.decodeResource(context.getResources(), R.drawable.projectile1), 18);
         projectile.setEnemy(enemy_character);
 
         // set and configure the cancel icon to get out of character selection
-        cancel_selection_icon = new Icon(context, BitmapFactory.decodeResource(context.getResources(), R.drawable.cancel_icon));
+        cancel_selection_icon = new Icon(view, BitmapFactory.decodeResource(context.getResources(), R.drawable.cancel_icon));
         cancel_selection_icon.setX((int) (user_character.getX() - (user_character.getX() * .5)));
         cancel_selection_icon.setY((int) (user_character.getY() - (user_character.getY() * .3)));
 
         // set and configure the reset icon to bring projectile back
-        reset_icon = new Icon(context, BitmapFactory.decodeResource(context.getResources(), R.drawable.reset_icon));
+        reset_icon = new Icon(view, BitmapFactory.decodeResource(context.getResources(), R.drawable.reset_icon));
         reset_icon.setX((int) (user_character.getX()));
         reset_icon.setY((int) (user_character.getY() - (user_character.getY() * .3)));
 
         // set and configure pause icon for instructions and quit game
-        pause_icon = new Icon(context, BitmapFactory.decodeResource(context.getResources(), R.drawable.pause_icon));
-        pause_icon.setX((int) (context.getScreenWidth() * .05));
-        pause_icon.setY((int) (context.getScreenHeight() * .05));
+        pause_icon = new Icon(view, BitmapFactory.decodeResource(context.getResources(), R.drawable.pause_icon));
+        pause_icon.setX((int) (view.getScreenWidth() * .05));
+        pause_icon.setY((int) (view.getScreenHeight() * .05));
         pause_icon.setActive(true);
 
         // setup instructions menu
-        instructions_menu_icon = new Icon(context, BitmapFactory.decodeResource(context.getResources(), R.drawable.instructions));
-        instructions_menu_icon.setX((int) (context.getScreenWidth() * .5) - (instructions_menu_icon.getWidth() / 2));
-        instructions_menu_icon.setY((int) (context.getScreenHeight() * .5) - (instructions_menu_icon.getHeight()));
+        instructions_menu_icon = new Icon(view, BitmapFactory.decodeResource(context.getResources(), R.drawable.instructions));
+        instructions_menu_icon.setX((int) (view.getScreenWidth() * .5) - (instructions_menu_icon.getWidth() / 2));
+        instructions_menu_icon.setY((int) (view.getScreenHeight() * .5) - (instructions_menu_icon.getHeight()));
 
         // icon to return to main menu
-        return_to_main_menu_icon = new Icon(context, BitmapFactory.decodeResource(context.getResources(), R.drawable.return_to_menu_icon));
+        return_to_main_menu_icon = new Icon(view, BitmapFactory.decodeResource(context.getResources(), R.drawable.return_to_menu_icon));
         return_to_main_menu_icon.setX(instructions_menu_icon.getX());
         return_to_main_menu_icon.setY((int) ((instructions_menu_icon.getY() + instructions_menu_icon.getHeight()) * 1.1));
 
@@ -120,8 +125,8 @@ public class Game {
         if (enemy_character.isHit()){
             updateScore(true);
             projectile.reset();
-            enemy_character.setX((int) (Math.random() * (context.getScreenWidth() - (user_character.getX() * 3.5))) + (int)(user_character.getX() * 3)); // so enemy is not placed behind user
-            enemy_character.setY((int) (Math.random() * (context.getScreenHeight() - (context.getScreenHeight() * .2))));
+            enemy_character.setX((int) (Math.random() * (view.getScreenWidth() - (user_character.getX() * 3.5))) + (int)(user_character.getX() * 3)); // so enemy is not placed behind user
+            enemy_character.setY((int) (Math.random() * (view.getScreenHeight() - (view.getScreenHeight() * .2))));
             enemy_character.setHit(false);
         }
     }
@@ -129,7 +134,7 @@ public class Game {
     public void draw(Canvas canvas) {
         if (canvas != null) {
             scene.draw(canvas);
-            canvas.drawText(String.valueOf(this.score), context.getScreenWidth()*.1f, context.getScreenHeight()*.1f, score_font_theme); // draw score
+            canvas.drawText(String.valueOf(this.score), view.getScreenWidth()*.1f, view.getScreenHeight()*.1f, score_font_theme); // draw score
             user_character.draw(canvas);
             weapon.draw(canvas);
             projectile.draw(canvas);
@@ -154,6 +159,10 @@ public class Game {
                 score += isReward ? 1 : -3;
                 break;
         }
+    }
+
+    public void setView(GameView v) {
+        this.view = v;
     }
 
     public void handleUserAction(MotionEvent event) {
