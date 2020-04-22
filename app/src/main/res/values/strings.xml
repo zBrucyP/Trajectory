@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">CNIT355_TeamProj</string>
+    <string name="app_name">Trajectory</string>
     <string name="play_button_text">Play</string>
     <string name="difficulty_easy">Easy</string>
     <string name="difficulty_medium">Medium</string>

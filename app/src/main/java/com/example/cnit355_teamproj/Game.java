@@ -34,6 +34,8 @@ public class Game {
 
     public Game(Context context, int diff) {
         this.context = context;
+
+        // set difficulty of game
         if(diff == 0) {
             this.game_difficulty = difficulty.EASY;
         } else if (diff == 1) {
@@ -79,7 +81,7 @@ public class Game {
         enemy_character.setY((int) (Math.random() * (view.getScreenHeight() - (view.getScreenHeight() * .2))));
 
         // create the projectile for the weapon
-        projectile = new Projectile(view, weapon, BitmapFactory.decodeResource(context.getResources(), R.drawable.projectile1), 18);
+        projectile = new Projectile(view, weapon, BitmapFactory.decodeResource(context.getResources(), R.drawable.projectile1), 35);
         projectile.setEnemy(enemy_character);
 
         // set and configure the cancel icon to get out of character selection
@@ -173,13 +175,13 @@ public class Game {
             float x = event.getX();
             float y = event.getY();
 
-            if (pause_icon.intersects(x, y)) {
+            if (pause_icon.intersects(x, y)) { // if user clicked the pause icon
                 isPaused = true;
                 instructions_menu_icon.setActive(true);
                 return_to_main_menu_icon.setActive(true);
             }
-            else if (user_character.isSelected() && !isPaused) {
-                if (cancel_selection_icon.intersects(x, y)) {
+            else if (user_character.isSelected() && !isPaused) { // user in selected state
+                if (cancel_selection_icon.intersects(x, y)) { // cancel selection state of user icon
                     user_character.setSelected(false);
                     user_character.setImage(BitmapFactory.decodeResource(context.getResources(), R.drawable.users_character));
                     projectile.setVisible(false);
@@ -187,11 +189,11 @@ public class Game {
                     cancel_selection_icon.setActive(false);
                     reset_icon.setActive(false);
                 }
-                else if (reset_icon.intersects(x, y)) {
+                else if (reset_icon.intersects(x, y)) { // user clicked reset icon
                     projectile.reset();
                 }
                 else {
-                    if(!projectile.isFired()
+                    if(!projectile.isFired() // if projectile is ready to be fired and user clicked acceptable destination
                             && x > (user_character.getX() * 1.1)) {
                         projectile.setDestinationPoint((int) x,(int) y);
                         projectile.fire_projectile();
@@ -199,11 +201,11 @@ public class Game {
                 }
             }
             else {
-                if(return_to_main_menu_icon.intersects(x, y)) {
+                if(return_to_main_menu_icon.intersects(x, y)) { // user clicked button to return to the main menu
                     // go back to main menu
                     isGameover = true;
                 }
-                else {
+                else { // close in-game menu, return to game
                     isPaused = false;
                     instructions_menu_icon.setActive(false);
                     return_to_main_menu_icon.setActive(false);
