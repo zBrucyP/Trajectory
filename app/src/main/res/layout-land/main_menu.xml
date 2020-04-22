@@ -31,10 +31,10 @@
         android:layout_height="14dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="148dp"
-        android:layout_marginEnd="452dp"
+        android:layout_marginStart="112dp"
+        android:layout_marginTop="152dp"
         android:background="@drawable/projectile1"
-        app:layout_constraintEnd_toStartOf="@+id/enemy_chara"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <View
