@@ -25,7 +25,10 @@ public class Game {
     private Icon instructions_menu_icon;
     private Icon return_to_main_menu_icon;
     private Paint score_font_theme;
+    private Paint timer_font_theme;
     private int score;
+    private int timer;
+    private boolean time_is_up;
     private enum difficulty {EASY, MEDIUM, HARD}
     private difficulty game_difficulty;
     private boolean isPaused;
@@ -64,6 +67,13 @@ public class Game {
         score_font_theme = new Paint();
         score_font_theme.setColor(Color.BLACK);
         score_font_theme.setTextSize(50);
+        score = 0;
+
+        // timer setup
+        timer_font_theme = new Paint();
+        timer_font_theme.setColor(Color.BLACK);
+        timer_font_theme.setTextSize(50);
+        timer = 60;
 
         // set the user's character
         user_character = new UserCharacter(view, BitmapFactory.decodeResource(context.getResources(), R.drawable.users_character));
@@ -117,6 +127,8 @@ public class Game {
         user_character.update();
         weapon.update();
         projectile.update();
+
+        // prevent the projectile from going off screen
         if (!projectile.isOnScreen()) {
             projectile.setFired(false);
             projectile.reset();
@@ -124,6 +136,10 @@ public class Game {
         }
 
         enemy_character.update();
+        // if the enemy character was hit by the projectile:
+        // 1. update the score by rewarding the player
+        // 2. reset the projectile to its home location
+        // 3. reset the enemy character, including a new position
         if (enemy_character.isHit()){
             updateScore(true);
             projectile.reset();
