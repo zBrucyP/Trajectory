@@ -31,11 +31,23 @@
         android:layout_height="14dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="119dp"
-        android:layout_marginEnd="104dp"
+        android:layout_marginTop="148dp"
+        android:layout_marginEnd="452dp"
         android:background="@drawable/projectile1"
         app:layout_constraintEnd_toStartOf="@+id/enemy_chara"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/projectile"
+        android:layout_width="84dp"
+        android:layout_height="14dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="149dp"
+        android:background="@drawable/projectile1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/enemy_chara" />
 
     <RelativeLayout
         android:id="@+id/charfame"
@@ -69,10 +81,10 @@
         android:layout_height="89dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="91dp"
         android:layout_marginTop="174dp"
         android:background="@drawable/play_button_frame"
-        app:layout_constraintStart_toEndOf="@+id/charfame"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <!-- Select Difficulty: -->
