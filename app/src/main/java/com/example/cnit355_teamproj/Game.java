@@ -35,6 +35,8 @@ public class Game {
     private long start_time;
     private long time_allowed;
     private boolean time_is_up;
+    private MissCounter miss_counter;
+    private int num_allowed_misses;
     private enum difficulty {EASY, MEDIUM, HARD}
     private difficulty game_difficulty;
     private boolean isPaused;
@@ -48,12 +50,15 @@ public class Game {
         if(diff == 0) {
             this.game_difficulty = difficulty.EASY;
             this.time_allowed = 80;
+            this.num_allowed_misses = 5;
         } else if (diff == 1) {
             this.game_difficulty = difficulty.MEDIUM;
             this.time_allowed = 60;
+            this.num_allowed_misses = 3;
         } else {
             this.game_difficulty = difficulty.HARD;
             this.time_allowed = 45;
+            this.num_allowed_misses = 1;
         }
     }
 
@@ -87,6 +92,15 @@ public class Game {
         timer_font_theme.setColor(Color.BLACK);
         timer_font_theme.setTextSize(50);
         start_time = SystemClock.elapsedRealtime() / 1000; // seconds since device was started
+
+        // miss counter setup
+        miss_counter = new MissCounter(
+                BitmapFactory.decodeResource(context.getResources(), R.drawable.counter_unfilled),
+                BitmapFactory.decodeResource(context.getResources(), R.drawable.counter_filled_red),
+                num_allowed_misses
+        );
+        miss_counter.setX(view.getScreenWidth() * .35f);
+        miss_counter.setY(view.getScreenHeight() * .05f);
 
         // set the user's character
         user_character = new UserCharacter(view, BitmapFactory.decodeResource(context.getResources(), R.drawable.users_character));
@@ -140,6 +154,7 @@ public class Game {
         user_character.update();
         weapon.update();
         projectile.update();
+        enemy_character.update();
 
         // update timer countdown
         if(this.timer > -1) {
@@ -153,17 +168,21 @@ public class Game {
             // pause to give user a moment of quiet
             // return to main menu
 
-            setGameover(true);
+            initiate_gameover_sequence();
         }
 
-        // prevent the projectile from going off screen
+        // prevent the projectile from going off screen, projectile missed target object
         if (!projectile.isOnScreen()) {
             projectile.setFired(false);
             projectile.reset();
+            boolean still_have_misses = miss_counter.miss_occurred();
             updateScore(false);
+
+            if(!still_have_misses) {
+                initiate_gameover_sequence();
+            }
         }
 
-        enemy_character.update();
         // if the enemy character was hit by the projectile:
         // 1. update the score by rewarding the player
         // 2. reset the projectile to its home location
@@ -182,6 +201,7 @@ public class Game {
             scene.draw(canvas);
             canvas.drawText(String.valueOf(this.score), view.getScreenWidth()*.1f, view.getScreenHeight()*.1f, score_font_theme); // draw score
             canvas.drawText(String.valueOf(this.timer), view.getScreenWidth()*.9f, view.getScreenHeight()*.1f, timer_font_theme); // draw timer
+            miss_counter.draw(canvas);
             user_character.draw(canvas);
             weapon.draw(canvas);
             projectile.draw(canvas);
@@ -210,6 +230,15 @@ public class Game {
 
     public void setView(GameView v) {
         this.view = v;
+    }
+
+    public void initiate_gameover_sequence() {
+        // write score to database
+        // pause to give user a moment of quiet
+        // return to main menu
+
+
+        setGameover(true);
     }
 
     public void handleUserAction(MotionEvent event) {
