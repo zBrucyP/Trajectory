@@ -17,7 +17,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
-    private MainThread thread;
     private Game game;
     private int screenWidth = Resources.getSystem().getDisplayMetrics().widthPixels;
     private int screenHeight = Resources.getSystem().getDisplayMetrics().heightPixels;

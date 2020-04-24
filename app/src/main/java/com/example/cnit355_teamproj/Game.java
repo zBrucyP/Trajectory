@@ -5,9 +5,13 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.os.Handler;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.MotionEvent;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Random;
 
 public class Game {
@@ -25,7 +29,14 @@ public class Game {
     private Icon instructions_menu_icon;
     private Icon return_to_main_menu_icon;
     private Paint score_font_theme;
+    private Paint timer_font_theme;
     private int score;
+    private long timer;
+    private long start_time;
+    private long time_allowed;
+    private boolean time_is_up;
+    private MissCounter miss_counter;
+    private int num_allowed_misses;
     private enum difficulty {EASY, MEDIUM, HARD}
     private difficulty game_difficulty;
     private boolean isPaused;
@@ -34,17 +45,29 @@ public class Game {
 
     public Game(Context context, int diff) {
         this.context = context;
+
+        // set difficulty of game
         if(diff == 0) {
             this.game_difficulty = difficulty.EASY;
+            this.time_allowed = 80;
+            this.num_allowed_misses = 5;
         } else if (diff == 1) {
             this.game_difficulty = difficulty.MEDIUM;
+            this.time_allowed = 60;
+            this.num_allowed_misses = 3;
         } else {
             this.game_difficulty = difficulty.HARD;
+            this.time_allowed = 45;
+            this.num_allowed_misses = 1;
         }
     }
 
     public boolean isGameover() {
         return isGameover;
+    }
+
+    public void setGameover(boolean gameover) {
+        isGameover = gameover;
     }
 
     public void setupGame(GameView v) {
@@ -62,6 +85,22 @@ public class Game {
         score_font_theme = new Paint();
         score_font_theme.setColor(Color.BLACK);
         score_font_theme.setTextSize(50);
+        score = 0;
+
+        // timer setup. Allowed game time is set in constructor with difficulty
+        timer_font_theme = new Paint();
+        timer_font_theme.setColor(Color.BLACK);
+        timer_font_theme.setTextSize(50);
+        start_time = SystemClock.elapsedRealtime() / 1000; // seconds since device was started
+
+        // miss counter setup
+        miss_counter = new MissCounter(
+                BitmapFactory.decodeResource(context.getResources(), R.drawable.counter_unfilled),
+                BitmapFactory.decodeResource(context.getResources(), R.drawable.counter_filled_red),
+                num_allowed_misses
+        );
+        miss_counter.setX(view.getScreenWidth() * .35f);
+        miss_counter.setY(view.getScreenHeight() * .05f);
 
         // set the user's character
         user_character = new UserCharacter(view, BitmapFactory.decodeResource(context.getResources(), R.drawable.users_character));
@@ -79,7 +118,7 @@ public class Game {
         enemy_character.setY((int) (Math.random() * (view.getScreenHeight() - (view.getScreenHeight() * .2))));
 
         // create the projectile for the weapon
-        projectile = new Projectile(view, weapon, BitmapFactory.decodeResource(context.getResources(), R.drawable.projectile1), 18);
+        projectile = new Projectile(view, weapon, BitmapFactory.decodeResource(context.getResources(), R.drawable.projectile1), 35);
         projectile.setEnemy(enemy_character);
 
         // set and configure the cancel icon to get out of character selection
@@ -115,13 +154,39 @@ public class Game {
         user_character.update();
         weapon.update();
         projectile.update();
+        enemy_character.update();
+
+        // update timer countdown
+        if(this.timer > -1) {
+            long time_interval = (SystemClock.elapsedRealtime() / 1000) - start_time; // difference between start time and now
+            this.timer = time_allowed - time_interval;
+        }
+
+        // time ran out
+        if(this.timer <= 0) {
+            // write score to database
+            // pause to give user a moment of quiet
+            // return to main menu
+
+            initiate_gameover_sequence();
+        }
+
+        // prevent the projectile from going off screen, projectile missed target object
         if (!projectile.isOnScreen()) {
             projectile.setFired(false);
             projectile.reset();
+            boolean still_have_misses = miss_counter.miss_occurred();
             updateScore(false);
+
+            if(!still_have_misses) {
+                initiate_gameover_sequence();
+            }
         }
 
-        enemy_character.update();
+        // if the enemy character was hit by the projectile:
+        // 1. update the score by rewarding the player
+        // 2. reset the projectile to its home location
+        // 3. reset the enemy character, including a new position
         if (enemy_character.isHit()){
             updateScore(true);
             projectile.reset();
@@ -135,6 +200,8 @@ public class Game {
         if (canvas != null) {
             scene.draw(canvas);
             canvas.drawText(String.valueOf(this.score), view.getScreenWidth()*.1f, view.getScreenHeight()*.1f, score_font_theme); // draw score
+            canvas.drawText(String.valueOf(this.timer), view.getScreenWidth()*.9f, view.getScreenHeight()*.1f, timer_font_theme); // draw timer
+            miss_counter.draw(canvas);
             user_character.draw(canvas);
             weapon.draw(canvas);
             projectile.draw(canvas);
@@ -165,6 +232,15 @@ public class Game {
         this.view = v;
     }
 
+    public void initiate_gameover_sequence() {
+        // write score to database
+        // pause to give user a moment of quiet
+        // return to main menu
+
+
+        setGameover(true);
+    }
+
     public void handleUserAction(MotionEvent event) {
         // get event details
         int action = event.getAction();
@@ -173,13 +249,13 @@ public class Game {
             float x = event.getX();
             float y = event.getY();
 
-            if (pause_icon.intersects(x, y)) {
+            if (pause_icon.intersects(x, y)) { // if user clicked the pause icon
                 isPaused = true;
                 instructions_menu_icon.setActive(true);
                 return_to_main_menu_icon.setActive(true);
             }
-            else if (user_character.isSelected() && !isPaused) {
-                if (cancel_selection_icon.intersects(x, y)) {
+            else if (user_character.isSelected() && !isPaused) { // user in selected state
+                if (cancel_selection_icon.intersects(x, y)) { // cancel selection state of user icon
                     user_character.setSelected(false);
                     user_character.setImage(BitmapFactory.decodeResource(context.getResources(), R.drawable.users_character));
                     projectile.setVisible(false);
@@ -187,11 +263,11 @@ public class Game {
                     cancel_selection_icon.setActive(false);
                     reset_icon.setActive(false);
                 }
-                else if (reset_icon.intersects(x, y)) {
+                else if (reset_icon.intersects(x, y)) { // user clicked reset icon
                     projectile.reset();
                 }
                 else {
-                    if(!projectile.isFired()
+                    if(!projectile.isFired() // if projectile is ready to be fired and user clicked acceptable destination
                             && x > (user_character.getX() * 1.1)) {
                         projectile.setDestinationPoint((int) x,(int) y);
                         projectile.fire_projectile();
@@ -199,16 +275,17 @@ public class Game {
                 }
             }
             else {
-                if(return_to_main_menu_icon.intersects(x, y)) {
+                if(return_to_main_menu_icon.intersects(x, y) // user clicked button to return to the main menu during pause menu
+                        && isPaused) {
                     // go back to main menu
-                    isGameover = true;
+                    setGameover(true);
                 }
-                else {
+                else { // close in-game menu, return to game
                     isPaused = false;
                     instructions_menu_icon.setActive(false);
                     return_to_main_menu_icon.setActive(false);
 
-                    if (user_character.intersects(x, y)) {
+                    if (user_character.intersects(x, y)) { // user selected their character
                         user_character.setSelected(true);
                         user_character.setImage(BitmapFactory.decodeResource(context.getResources(), R.drawable.users_character_selected));
                         projectile.setVisible(true);

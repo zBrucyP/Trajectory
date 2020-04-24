@@ -34,13 +34,15 @@ public class GameActivity extends AppCompatActivity {
         Intent i = getIntent();
         this.difficulty = i.getIntExtra(EXTRA_DIFFICULTY, 0);
 
-        this.view = null;
-
+        // create the main elements of the game
+        // Game provides the data and game logic to show on the view
+        // thread is a thread to run game events
         this.game = new Game(this, difficulty);
         this.view = new GameView(this, difficulty, game);
-        thread = new MainThread(this, view.getHolder(), view);
+        this.thread = new MainThread(this, view.getHolder(), view);
         game.setupGame(this.view);
 
+        // start the thread to run the game events
         thread.setRunning(true);
         thread.start();
 
@@ -59,10 +61,12 @@ public class GameActivity extends AppCompatActivity {
 
     public void updateGame(Canvas canvas) {
         if(!isGameOver()) {
+            // draw models, make any necessary updates
             draw(canvas);
             update();
         }
         else {
+            // game is over, return to main menu activity
             setResult(Activity.RESULT_OK);
             finish();
         }
@@ -82,6 +86,7 @@ public class GameActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
 
+        // ensure the thread is stopped
         boolean retry = true;
         while (retry) {
             try {
@@ -92,7 +97,5 @@ public class GameActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-        retry = false;
-
     }
 }
