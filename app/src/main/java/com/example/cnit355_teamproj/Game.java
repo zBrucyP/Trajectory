@@ -5,9 +5,13 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.os.Handler;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.MotionEvent;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Random;
 
 public class Game {
@@ -27,7 +31,9 @@ public class Game {
     private Paint score_font_theme;
     private Paint timer_font_theme;
     private int score;
-    private int timer;
+    private long timer;
+    private long start_time;
+    private long time_allowed;
     private boolean time_is_up;
     private enum difficulty {EASY, MEDIUM, HARD}
     private difficulty game_difficulty;
@@ -41,15 +47,22 @@ public class Game {
         // set difficulty of game
         if(diff == 0) {
             this.game_difficulty = difficulty.EASY;
+            this.time_allowed = 80;
         } else if (diff == 1) {
             this.game_difficulty = difficulty.MEDIUM;
+            this.time_allowed = 60;
         } else {
             this.game_difficulty = difficulty.HARD;
+            this.time_allowed = 45;
         }
     }
 
     public boolean isGameover() {
         return isGameover;
+    }
+
+    public void setGameover(boolean gameover) {
+        isGameover = gameover;
     }
 
     public void setupGame(GameView v) {
@@ -69,11 +82,11 @@ public class Game {
         score_font_theme.setTextSize(50);
         score = 0;
 
-        // timer setup
+        // timer setup. Allowed game time is set in constructor with difficulty
         timer_font_theme = new Paint();
         timer_font_theme.setColor(Color.BLACK);
         timer_font_theme.setTextSize(50);
-        timer = 60;
+        start_time = SystemClock.elapsedRealtime() / 1000; // seconds since device was started
 
         // set the user's character
         user_character = new UserCharacter(view, BitmapFactory.decodeResource(context.getResources(), R.drawable.users_character));
@@ -128,6 +141,21 @@ public class Game {
         weapon.update();
         projectile.update();
 
+        // update timer countdown
+        if(this.timer > -1) {
+            long time_interval = (SystemClock.elapsedRealtime() / 1000) - start_time; // difference between start time and now
+            this.timer = time_allowed - time_interval;
+        }
+
+        // time ran out
+        if(this.timer <= 0) {
+            // write score to database
+            // pause to give user a moment of quiet
+            // return to main menu
+
+            setGameover(true);
+        }
+
         // prevent the projectile from going off screen
         if (!projectile.isOnScreen()) {
             projectile.setFired(false);
@@ -153,6 +181,7 @@ public class Game {
         if (canvas != null) {
             scene.draw(canvas);
             canvas.drawText(String.valueOf(this.score), view.getScreenWidth()*.1f, view.getScreenHeight()*.1f, score_font_theme); // draw score
+            canvas.drawText(String.valueOf(this.timer), view.getScreenWidth()*.9f, view.getScreenHeight()*.1f, timer_font_theme); // draw timer
             user_character.draw(canvas);
             weapon.draw(canvas);
             projectile.draw(canvas);
@@ -220,7 +249,7 @@ public class Game {
                 if(return_to_main_menu_icon.intersects(x, y) // user clicked button to return to the main menu during pause menu
                         && isPaused) {
                     // go back to main menu
-                    isGameover = true;
+                    setGameover(true);
                 }
                 else { // close in-game menu, return to game
                     isPaused = false;
