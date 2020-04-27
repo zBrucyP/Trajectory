@@ -86,7 +86,10 @@
         android:layout_alignParentTop="true"
         android:layout_marginStart="5dp"
         android:layout_marginBottom="4dp"
-        android:background="@drawable/how_to_play_frame"
+        android:background="@drawable/play_button_graident"
+        android:fontFamily="@font/imprisha"
+        android:text="@string/how_to_play_button_text"
+        android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -97,7 +100,11 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_marginTop="174dp"
-        android:background="@drawable/play_button_frame"
+        android:background="@drawable/play_button_graident"
+        android:backgroundTintMode="multiply"
+        android:fontFamily="@font/imprisha_shadow"
+        android:text="@string/play_button_text"
+        android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
