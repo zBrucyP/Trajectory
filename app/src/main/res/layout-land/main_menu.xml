@@ -1,13 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
+    <!-- Game Title -->
     <!-- drawable/enemy_chara.xml -->
+
+    <TextView
+        android:id="@+id/Title"
+        android:layout_width="358dp"
+        android:layout_height="74dp"
+        android:layout_marginBottom="12dp"
+        android:fontFamily="@font/imprisha_shadow"
+        android:gravity="center_horizontal|top"
+        android:text="@string/game_title"
+        android:textAlignment="center"
+        android:textAllCaps="true"
+        android:textSize="46sp"
+        app:layout_constraintBottom_toTopOf="@+id/playButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <View
         android:id="@+id/enemy_chara"
         android:layout_width="31dp"
@@ -31,10 +46,10 @@
         android:layout_height="14dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="148dp"
-        android:layout_marginEnd="452dp"
+        android:layout_marginStart="112dp"
+        android:layout_marginTop="152dp"
         android:background="@drawable/projectile1"
-        app:layout_constraintEnd_toStartOf="@+id/enemy_chara"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <View
@@ -105,6 +120,7 @@
             android:id="@+id/select_diff"
             android:layout_width="207dp"
             android:layout_height="21dp"
+            android:fontFamily="@font/imprisha_shadow"
             android:gravity="center_horizontal|top"
             android:text="@string/select_diff"
             tools:layout_editor_absoluteX="262dp"
