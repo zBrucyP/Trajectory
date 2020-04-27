@@ -33,9 +33,9 @@ public class MainActivity extends Activity {
     private RadioGroup rg_difficulties;
     private Button how_to_play_button;
     private SQLiteDatabase dB;
-    private int highscore_easy;
-    private int highscore_medium;
-    private int highscore_hard;
+    private int highscore_easy = 9999;
+    private int highscore_medium = 9999;
+    private int highscore_hard = 9999;
 
     private int LAUNCH_GAME_ACTIVITY = 1;
 
@@ -57,8 +57,6 @@ public class MainActivity extends Activity {
         highscore_medium = getHighScore("MEDIUM");
         highscore_hard = getHighScore("HARD");
 
-        Log.d("difficultyprint", Integer.toString(highscore_easy) + " | " + Integer.toString(highscore_medium) + " | " + Integer.toString(highscore_hard));
-
         // difficulties radiogroup
         rg_difficulties = (RadioGroup) findViewById(R.id.radioGroup_difficulties);
 
@@ -79,6 +77,15 @@ public class MainActivity extends Activity {
                 howToPlay();
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        highscore_easy = getHighScore("EASY");
+        highscore_medium = getHighScore("MEDIUM");
+        highscore_hard = getHighScore("HARD");
     }
 
     public void howToPlay() {
@@ -119,7 +126,7 @@ public class MainActivity extends Activity {
         Cursor cursor = DatabaseHelper.query_table(
                 dB,
                 DbSchema.ScoreTable.NAME,
-                "difficulty='" + difficulty + "' AND score=(SELECT MAX(score) FROM " + DbSchema.ScoreTable.NAME + ")",
+                "difficulty='" + difficulty + "' AND score=(SELECT MAX(score) FROM " + DbSchema.ScoreTable.NAME + " WHERE difficulty='" + difficulty + "')",
                 null
                 );
 

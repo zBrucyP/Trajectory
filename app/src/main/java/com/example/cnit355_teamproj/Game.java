@@ -244,10 +244,10 @@ public class Game {
         this.view = v;
     }
 
-    private ContentValues get_score_contentValues(int score_val) {
+    private ContentValues get_score_contentValues(int score_val, String difficulty) {
         ContentValues values = new ContentValues();
 
-        values.put(ScoreTable.Cols.DIFFICULTY, game_difficulty.toString());
+        values.put(ScoreTable.Cols.DIFFICULTY, difficulty);
         values.put(ScoreTable.Cols.SCORE, score_val);
         values.put(ScoreTable.Cols.DATE_ACHIEVED,
                 new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
@@ -258,7 +258,7 @@ public class Game {
 
     public void initiate_gameover_sequence() {
         // write score to database
-        ContentValues values = get_score_contentValues(this.score);
+        ContentValues values = get_score_contentValues(this.score, this.game_difficulty.toString());
         dB.insert(ScoreTable.NAME, null, values);
 
         // pause to give user a moment of quiet
