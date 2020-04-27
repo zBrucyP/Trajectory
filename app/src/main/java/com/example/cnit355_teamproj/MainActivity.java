@@ -7,10 +7,13 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -21,12 +24,18 @@ import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.example.cnit355_teamproj.database.DatabaseHelper;
+import com.example.cnit355_teamproj.database.DbSchema;
+
 public class MainActivity extends Activity {
 
     private Button play_button;
     private RadioGroup rg_difficulties;
     private Button how_to_play_button;
-
+    private SQLiteDatabase dB;
+    private int highscore_easy = 9999;
+    private int highscore_medium = 9999;
+    private int highscore_hard = 9999;
 
     private int LAUNCH_GAME_ACTIVITY = 1;
 
@@ -40,6 +49,13 @@ public class MainActivity extends Activity {
 
         // start app with the main menu displayed
         setContentView(R.layout.main_menu);
+
+        // grab connection to database and highest of stored scores by difficulty
+        dB = new DatabaseHelper(this.getApplicationContext())
+                .getWritableDatabase();
+        highscore_easy = getHighScore("EASY");
+        highscore_medium = getHighScore("MEDIUM");
+        highscore_hard = getHighScore("HARD");
 
         // difficulties radiogroup
         rg_difficulties = (RadioGroup) findViewById(R.id.radioGroup_difficulties);
@@ -62,6 +78,16 @@ public class MainActivity extends Activity {
             }
         });
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        highscore_easy = getHighScore("EASY");
+        highscore_medium = getHighScore("MEDIUM");
+        highscore_hard = getHighScore("HARD");
+    }
+
     public void howToPlay() {
         Dialog builder = new Dialog(this);
         builder.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -94,5 +120,26 @@ public class MainActivity extends Activity {
         startActivityForResult(i, LAUNCH_GAME_ACTIVITY);
 
         //setContentView(new GameView(this, difficulty));
+    }
+
+    public int getHighScore(String difficulty) {
+        Cursor cursor = DatabaseHelper.query_table(
+                dB,
+                DbSchema.ScoreTable.NAME,
+                "difficulty='" + difficulty + "' AND score=(SELECT MAX(score) FROM " + DbSchema.ScoreTable.NAME + " WHERE difficulty='" + difficulty + "')",
+                null
+                );
+
+        try {
+            if (cursor != null && cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                return cursor.getInt(cursor.getColumnIndex(DbSchema.ScoreTable.Cols.SCORE));
+            }
+            else {
+                return 0;
+            }
+        } finally {
+            cursor.close();
+        }
     }
 }

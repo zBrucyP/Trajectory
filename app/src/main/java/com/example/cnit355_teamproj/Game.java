@@ -1,6 +1,8 @@
 package com.example.cnit355_teamproj;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -10,9 +12,15 @@ import android.os.SystemClock;
 import android.util.Log;
 import android.view.MotionEvent;
 
+import com.example.cnit355_teamproj.database.DatabaseHelper;
+import com.example.cnit355_teamproj.database.DbSchema;
+import com.example.cnit355_teamproj.database.DbSchema.ScoreTable;
+
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
+import java.util.SimpleTimeZone;
 
 public class Game {
 
@@ -41,6 +49,7 @@ public class Game {
     private difficulty game_difficulty;
     private boolean isPaused;
     private boolean isGameover;
+    private SQLiteDatabase dB;
 
 
     public Game(Context context, int diff) {
@@ -80,6 +89,9 @@ public class Game {
 
         // set the background and scene objects
         scene = new Scene(view);
+
+        dB = new DatabaseHelper(context.getApplicationContext())
+                .getWritableDatabase();
 
         // score setup
         score_font_theme = new Paint();
@@ -232,12 +244,27 @@ public class Game {
         this.view = v;
     }
 
+    private ContentValues get_score_contentValues(int score_val, String difficulty) {
+        ContentValues values = new ContentValues();
+
+        values.put(ScoreTable.Cols.DIFFICULTY, difficulty);
+        values.put(ScoreTable.Cols.SCORE, score_val);
+        values.put(ScoreTable.Cols.DATE_ACHIEVED,
+                new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+
+        return values;
+    }
+
+
     public void initiate_gameover_sequence() {
         // write score to database
+        ContentValues values = get_score_contentValues(this.score, this.game_difficulty.toString());
+        dB.insert(ScoreTable.NAME, null, values);
+
         // pause to give user a moment of quiet
-        // return to main menu
 
 
+        // set flag to return to main menu
         setGameover(true);
     }
 
