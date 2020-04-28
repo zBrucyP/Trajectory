@@ -1,14 +1,26 @@
 package com.example.cnit355_teamproj;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.os.Handler;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.MotionEvent;
 
+import com.example.cnit355_teamproj.database.DatabaseHelper;
+import com.example.cnit355_teamproj.database.DbSchema;
+import com.example.cnit355_teamproj.database.DbSchema.ScoreTable;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Random;
+import java.util.SimpleTimeZone;
 
 public class Game {
 
@@ -27,12 +39,18 @@ public class Game {
     private Paint score_font_theme;
     private Paint timer_font_theme;
     private int score;
-    private int timer;
+    private long timer;
+    private long start_time;
+    private long time_allowed;
     private boolean time_is_up;
+    private MissCounter miss_counter;
+    private int num_allowed_misses;
     private enum difficulty {EASY, MEDIUM, HARD}
     private difficulty game_difficulty;
     private boolean isPaused;
     private boolean isGameover;
+    private SQLiteDatabase dB;
+    private long time_interval;
 
 
     public Game(Context context, int diff) {
@@ -41,15 +59,25 @@ public class Game {
         // set difficulty of game
         if(diff == 0) {
             this.game_difficulty = difficulty.EASY;
+            this.time_allowed = 80;
+            this.num_allowed_misses = 5;
         } else if (diff == 1) {
             this.game_difficulty = difficulty.MEDIUM;
+            this.time_allowed = 60;
+            this.num_allowed_misses = 3;
         } else {
             this.game_difficulty = difficulty.HARD;
+            this.time_allowed = 45;
+            this.num_allowed_misses = 1;
         }
     }
 
     public boolean isGameover() {
         return isGameover;
+    }
+
+    public void setGameover(boolean gameover) {
+        isGameover = gameover;
     }
 
     public void setupGame(GameView v) {
@@ -63,17 +91,29 @@ public class Game {
         // set the background and scene objects
         scene = new Scene(view);
 
+        dB = new DatabaseHelper(context.getApplicationContext())
+                .getWritableDatabase();
+
         // score setup
         score_font_theme = new Paint();
         score_font_theme.setColor(Color.BLACK);
         score_font_theme.setTextSize(50);
         score = 0;
 
-        // timer setup
+        // timer setup. Allowed game time is set in constructor with difficulty
         timer_font_theme = new Paint();
         timer_font_theme.setColor(Color.BLACK);
         timer_font_theme.setTextSize(50);
-        timer = 60;
+        start_time = SystemClock.elapsedRealtime() / 1000; // seconds since device was started
+
+        // miss counter setup
+        miss_counter = new MissCounter(
+                BitmapFactory.decodeResource(context.getResources(), R.drawable.counter_unfilled),
+                BitmapFactory.decodeResource(context.getResources(), R.drawable.counter_filled_red),
+                num_allowed_misses
+        );
+        miss_counter.setX(view.getScreenWidth() * .35f);
+        miss_counter.setY(view.getScreenHeight() * .05f);
 
         // set the user's character
         user_character = new UserCharacter(view, BitmapFactory.decodeResource(context.getResources(), R.drawable.users_character));
@@ -127,15 +167,37 @@ public class Game {
         user_character.update();
         weapon.update();
         projectile.update();
+        enemy_character.update();
 
-        // prevent the projectile from going off screen
+//         update timer countdown
+        if(!isPaused){
+                if(this.timer > -1) {
+                    time_interval = (SystemClock.elapsedRealtime() / 1000) - start_time; // difference between start time and now
+                    this.timer = time_allowed - time_interval;
+                }
+        }
+
+        // time ran out
+        if(this.timer <= 0) {
+            // write score to database
+            // pause to give user a moment of quiet
+            // return to main menu
+
+            initiate_gameover_sequence();
+        }
+
+        // prevent the projectile from going off screen, projectile missed target object
         if (!projectile.isOnScreen()) {
             projectile.setFired(false);
             projectile.reset();
+            boolean still_have_misses = miss_counter.miss_occurred();
             updateScore(false);
+
+            if(!still_have_misses) {
+                initiate_gameover_sequence();
+            }
         }
 
-        enemy_character.update();
         // if the enemy character was hit by the projectile:
         // 1. update the score by rewarding the player
         // 2. reset the projectile to its home location
@@ -153,6 +215,8 @@ public class Game {
         if (canvas != null) {
             scene.draw(canvas);
             canvas.drawText(String.valueOf(this.score), view.getScreenWidth()*.1f, view.getScreenHeight()*.1f, score_font_theme); // draw score
+            canvas.drawText(String.valueOf(this.timer), view.getScreenWidth()*.9f, view.getScreenHeight()*.1f, timer_font_theme); // draw timer
+            miss_counter.draw(canvas);
             user_character.draw(canvas);
             weapon.draw(canvas);
             projectile.draw(canvas);
@@ -181,6 +245,30 @@ public class Game {
 
     public void setView(GameView v) {
         this.view = v;
+    }
+
+    private ContentValues get_score_contentValues(int score_val, String difficulty) {
+        ContentValues values = new ContentValues();
+
+        values.put(ScoreTable.Cols.DIFFICULTY, difficulty);
+        values.put(ScoreTable.Cols.SCORE, score_val);
+        values.put(ScoreTable.Cols.DATE_ACHIEVED,
+                new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+
+        return values;
+    }
+
+
+    public void initiate_gameover_sequence() {
+        // write score to database
+        ContentValues values = get_score_contentValues(this.score, this.game_difficulty.toString());
+        dB.insert(ScoreTable.NAME, null, values);
+
+        // pause to give user a moment of quiet
+
+
+        // set flag to return to main menu
+        setGameover(true);
     }
 
     public void handleUserAction(MotionEvent event) {
@@ -220,10 +308,11 @@ public class Game {
                 if(return_to_main_menu_icon.intersects(x, y) // user clicked button to return to the main menu during pause menu
                         && isPaused) {
                     // go back to main menu
-                    isGameover = true;
+                    setGameover(true);
                 }
                 else { // close in-game menu, return to game
                     isPaused = false;
+                    start_time = (SystemClock.elapsedRealtime() / 1000) - time_interval; //Reset Start Time and then subtracts time already passed for Pausing the Timer when Pause button is hit
                     instructions_menu_icon.setActive(false);
                     return_to_main_menu_icon.setActive(false);
 

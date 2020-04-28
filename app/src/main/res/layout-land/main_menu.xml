@@ -1,13 +1,136 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
 
-    <!-- drawable/enemy_chara.xml -->
+    <LinearLayout
+        android:layout_width="118dp"
+        android:layout_height="97dp"
+        android:layout_margin="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:orientation="vertical"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/high_scores"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/imprisha_shadow"
+            android:gravity="center_horizontal|top"
+            android:text="@string/game_high_scores"
+            android:textStyle="bold"
+            tools:layout_editor_absoluteX="262dp"
+            tools:layout_editor_absoluteY="299dp" />
+
+
+        <!-- Easy -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="start|center_horizontal|center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/easy_high_score_text"
+                android:layout_width="60dp"
+                android:layout_height="match_parent"
+                android:gravity="center_horizontal|center_vertical"
+                android:text="@string/easy_high_score" />
+
+            <TextView
+                android:id="@+id/easy_high_score_num"
+                android:layout_width="60dp"
+                android:layout_height="match_parent"
+                android:gravity="center_horizontal|center_vertical"
+                android:text="@string/score_start_vale" />
+
+
+        </LinearLayout>
+
+
+        <!-- Medium -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="start|center_horizontal|center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/medium_high_score_text"
+                android:layout_width="60dp"
+                android:layout_height="match_parent"
+                android:gravity="center_horizontal|center_vertical"
+                android:text="@string/medium_high_score" />
+
+            <TextView
+                android:id="@+id/medium_high_score_num"
+                android:layout_width="60dp"
+                android:layout_height="match_parent"
+                android:gravity="center_horizontal|center_vertical"
+                android:text="@string/score_start_vale" />
+
+
+        </LinearLayout>
+
+
+        <!-- Hard -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="start|center_horizontal|center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/hard_high_score_text"
+                android:layout_width="60dp"
+                android:layout_height="match_parent"
+                android:gravity="center_horizontal|center_vertical"
+                android:text="@string/hard_high_score" />
+
+            <TextView
+                android:id="@+id/hard_high_score_num"
+                android:layout_width="60dp"
+                android:layout_height="match_parent"
+                android:gravity="center_horizontal|center_vertical"
+                android:text="@string/score_start_vale" />
+
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/clear_scores"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:fontFamily="@font/imprisha_shadow"
+            android:text="@string/reset_scores"
+            android:textSize="10dp"
+            android:background="@drawable/play_button_graident"
+            />
+
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/Title"
+        android:layout_width="358dp"
+        android:layout_height="74dp"
+        android:layout_marginBottom="12dp"
+        android:fontFamily="@font/imprisha_shadow"
+        android:gravity="center_horizontal|top"
+        android:text="@string/game_title"
+        android:textAlignment="center"
+        android:textAllCaps="true"
+        android:textSize="46sp"
+        app:layout_constraintBottom_toTopOf="@+id/playButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <View
         android:id="@+id/enemy_chara"
         android:layout_width="31dp"
@@ -20,21 +143,16 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-
-    <!-- projectile1 1 -->
-
-    <!-- character -->
-
     <View
         android:id="@+id/projectile1"
         android:layout_width="84dp"
         android:layout_height="14dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="148dp"
-        android:layout_marginEnd="452dp"
+        android:layout_marginStart="112dp"
+        android:layout_marginTop="152dp"
         android:background="@drawable/projectile1"
-        app:layout_constraintEnd_toStartOf="@+id/enemy_chara"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <View
@@ -71,7 +189,10 @@
         android:layout_alignParentTop="true"
         android:layout_marginStart="5dp"
         android:layout_marginBottom="4dp"
-        android:background="@drawable/how_to_play_frame"
+        android:background="@drawable/play_button_graident"
+        android:fontFamily="@font/imprisha"
+        android:text="@string/how_to_play_button_text"
+        android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -82,7 +203,11 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_marginTop="174dp"
-        android:background="@drawable/play_button_frame"
+        android:background="@drawable/play_button_graident"
+        android:backgroundTintMode="multiply"
+        android:fontFamily="@font/imprisha_shadow"
+        android:text="@string/play_button_text"
+        android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -105,6 +230,7 @@
             android:id="@+id/select_diff"
             android:layout_width="207dp"
             android:layout_height="21dp"
+            android:fontFamily="@font/imprisha_shadow"
             android:gravity="center_horizontal|top"
             android:text="@string/select_diff"
             tools:layout_editor_absoluteX="262dp"
