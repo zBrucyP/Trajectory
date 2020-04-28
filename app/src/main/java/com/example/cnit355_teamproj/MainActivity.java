@@ -22,6 +22,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.cnit355_teamproj.database.DatabaseHelper;
@@ -57,6 +58,11 @@ public class MainActivity extends Activity {
         highscore_medium = getHighScore("MEDIUM");
         highscore_hard = getHighScore("HARD");
 
+        //update scores
+        updateScoreBoard(highscore_easy, "easy");
+        updateScoreBoard(highscore_medium, "medium");
+        updateScoreBoard(highscore_hard, "hard");
+
         // difficulties radiogroup
         rg_difficulties = (RadioGroup) findViewById(R.id.radioGroup_difficulties);
 
@@ -79,6 +85,27 @@ public class MainActivity extends Activity {
         });
     }
 
+    public void updateScoreBoard(int score, String id){
+        switch (id)
+        {
+            case "easy":
+                TextView easy = findViewById(R.id.easy_high_score_num);
+                easy.setText(Integer.toString(score));
+            break;
+            case "medium":
+                TextView medium = findViewById(R.id.medium_high_score_num);
+                medium.setText(Integer.toString(score));
+                break;
+            case "hard":
+                TextView hard = findViewById(R.id.hard_high_score_num);
+                hard.setText(Integer.toString(score));
+                break;
+            default:
+                break;
+        }
+
+    }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -86,6 +113,11 @@ public class MainActivity extends Activity {
         highscore_easy = getHighScore("EASY");
         highscore_medium = getHighScore("MEDIUM");
         highscore_hard = getHighScore("HARD");
+
+        //update scores
+        updateScoreBoard(highscore_easy, "easy");
+        updateScoreBoard(highscore_medium, "medium");
+        updateScoreBoard(highscore_hard, "hard");
     }
 
     public void howToPlay() {
