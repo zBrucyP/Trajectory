@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -18,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.accessibility.AccessibilityManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
@@ -31,6 +33,7 @@ import com.example.cnit355_teamproj.database.DbSchema;
 public class MainActivity extends Activity {
 
     private Button play_button;
+    private Button reset_button;
     private RadioGroup rg_difficulties;
     private Button how_to_play_button;
     private SQLiteDatabase dB;
@@ -66,6 +69,15 @@ public class MainActivity extends Activity {
         // difficulties radiogroup
         rg_difficulties = (RadioGroup) findViewById(R.id.radioGroup_difficulties);
 
+        //reset high scores
+        reset_button = (Button) findViewById(R.id.clear_scores);
+        reset_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dropHighScoreTable();
+            }
+            });
+
         // play button
         play_button = (Button) findViewById(R.id.playButton);
         play_button.setOnClickListener(new View.OnClickListener() {
@@ -83,6 +95,19 @@ public class MainActivity extends Activity {
                 howToPlay();
             }
         });
+    }
+
+    public void dropHighScoreTable(){
+        DatabaseHelper.dropTable(dB);
+        highscore_easy = getHighScore("EASY");
+        highscore_medium = getHighScore("MEDIUM");
+        highscore_hard = getHighScore("HARD");
+
+        //update scores
+        updateScoreBoard(highscore_easy, "easy");
+        updateScoreBoard(highscore_medium, "medium");
+        updateScoreBoard(highscore_hard, "hard");
+
     }
 
     public void updateScoreBoard(int score, String id){

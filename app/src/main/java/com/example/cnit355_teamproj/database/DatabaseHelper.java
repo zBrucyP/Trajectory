@@ -2,6 +2,7 @@ package com.example.cnit355_teamproj.database;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import com.example.cnit355_teamproj.database.DbSchema.ScoreTable;
@@ -24,6 +25,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 ScoreTable.Cols.DATE_ACHIEVED +
                 ")"
         );
+    }
+
+    public static boolean dropTable(SQLiteDatabase db){
+        try{
+            //Drops Table to clear scores
+            db.execSQL("DROP TABLE IF EXISTS "+ ScoreTable.NAME);
+            // Recreates Table for Scores
+            db.execSQL("create table " + ScoreTable.NAME + "(" +
+                    "_id integer primary key autoincrement, " +
+                    ScoreTable.Cols.DIFFICULTY + ", " +
+                    ScoreTable.Cols.SCORE + ", " +
+                    ScoreTable.Cols.DATE_ACHIEVED +
+                    ")"
+            );
+            return true;
+        }catch (SQLException e){
+            return false;
+        }
     }
 
     @Override

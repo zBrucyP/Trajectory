@@ -12,4 +12,5 @@
     <string name="medium_high_score">Medium: </string>
     <string name="hard_high_score">Hard: </string>
     <string name="score_start_vale">0</string>
+    <string name="reset_scores">Reset High Scores</string>
 </resources>
