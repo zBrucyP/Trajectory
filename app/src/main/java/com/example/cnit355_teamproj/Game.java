@@ -50,6 +50,7 @@ public class Game {
     private boolean isPaused;
     private boolean isGameover;
     private SQLiteDatabase dB;
+    private long time_interval;
 
 
     public Game(Context context, int diff) {
@@ -168,10 +169,12 @@ public class Game {
         projectile.update();
         enemy_character.update();
 
-        // update timer countdown
-        if(this.timer > -1) {
-            long time_interval = (SystemClock.elapsedRealtime() / 1000) - start_time; // difference between start time and now
-            this.timer = time_allowed - time_interval;
+//         update timer countdown
+        if(!isPaused){
+                if(this.timer > -1) {
+                    time_interval = (SystemClock.elapsedRealtime() / 1000) - start_time; // difference between start time and now
+                    this.timer = time_allowed - time_interval;
+                }
         }
 
         // time ran out
@@ -309,6 +312,7 @@ public class Game {
                 }
                 else { // close in-game menu, return to game
                     isPaused = false;
+                    start_time = (SystemClock.elapsedRealtime() / 1000) - time_interval; //Reset Start Time and then subtracts time already passed for Pausing the Timer when Pause button is hit
                     instructions_menu_icon.setActive(false);
                     return_to_main_menu_icon.setActive(false);
 

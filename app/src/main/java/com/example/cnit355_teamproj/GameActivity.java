@@ -68,6 +68,8 @@ public class GameActivity extends AppCompatActivity {
         else {
             // game is over, return to main menu activity
             setResult(Activity.RESULT_OK);
+            //pass score and diffcult to main activity onResume
+
             finish();
         }
     }
