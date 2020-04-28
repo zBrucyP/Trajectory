@@ -50,6 +50,7 @@ public class Game {
     private boolean isPaused;
     private boolean isGameover;
     private SQLiteDatabase dB;
+    private boolean playerSelected;
 
 
     public Game(Context context, int diff) {
@@ -168,11 +169,21 @@ public class Game {
         projectile.update();
         enemy_character.update();
 
-        // update timer countdown
-        if(this.timer > -1) {
-            long time_interval = (SystemClock.elapsedRealtime() / 1000) - start_time; // difference between start time and now
-            this.timer = time_allowed - time_interval;
+//         update timer countdown
+        if(!isPaused){
+            if(playerSelected){
+                if(this.timer > -1) {
+                    long time_interval = (SystemClock.elapsedRealtime() / 1000) - start_time; // difference between start time and now
+                    this.timer = time_allowed - time_interval;
+                }
+            }
         }
+
+//  orginal      // update timer countdown
+//        if(this.timer > -1) {
+//            long time_interval = (SystemClock.elapsedRealtime() / 1000) - start_time; // difference between start time and now
+//            this.timer = time_allowed - time_interval;
+//        }
 
         // time ran out
         if(this.timer <= 0) {
