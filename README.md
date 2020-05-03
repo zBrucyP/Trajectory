@@ -7,5 +7,5 @@ Trajectory is a mobile game developed for the Android platform. It is a simple 2
 ![Img of Instructions](https://github.com/zBrucyP/Trajectory/blob/master/app/src/main/res/drawable/instructions.png)
 
 
-##Documentation
+## Documentation
 https://drive.google.com/drive/folders/1tqEApa_LyNMFZvXr2TsE0Yqq4JdSIeKa?usp=sharing
