@@ -238,9 +238,10 @@ public class Game {
                 score += isReward ? 1 : -1;
                 break;
             case HARD:
-                score += isReward ? 1 : -3;
+                    score += isReward ? 1 : -3;
                 break;
         }
+        if (score < 0) score = 0;
     }
 
     public void setView(GameView v) {
